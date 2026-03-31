@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>三国武将录</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="screen-title" class="screen active">
+      <div class="title-content">
+        <p class="title-subtitle">乱世群雄</p>
+        <h1 class="title-main">三国武将录</h1>
+        <p class="title-tagline">—— 你的选择，决定你的命运 ——</p>
+        <div class="title-buttons">
+          <button id="btn-start" class="btn btn-primary">开始征途</button>
+          <button id="btn-gallery" class="btn btn-secondary">结局图鉴 (<span id="gallery-count">0</span>/8)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-select" class="screen">
+      <h2 class="screen-heading">选择你的武将</h2>
+      <div id="character-grid" class="character-grid"></div>
+    </div>
+
+    <div id="screen-event" class="screen">
+      <div class="status-bar">
+        <span id="phase-label">📍 少年期 · 第 1/5 回</span>
+        <span id="char-name"></span>
+      </div>
+      <div class="attr-bar">
+        <span>⚔️ 武 <b id="attr-wu">0</b></span>
+        <span>📖 智 <b id="attr-zhi">0</b></span>
+        <span>🏛️ 德 <b id="attr-de">0</b></span>
+        <span>✨ 魅 <b id="attr-mei">0</b></span>
+      </div>
+      <div class="event-content">
+        <h3 id="event-title" class="event-title"></h3>
+        <p id="event-desc" class="event-desc"></p>
+        <div id="choices-container" class="choices"></div>
+      </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+      <div class="result-content">
+        <p id="result-text" class="result-text"></p>
+        <div id="result-effects" class="result-effects"></div>
+        <button id="btn-continue" class="btn btn-primary">继续</button>
+      </div>
+    </div>
+
+    <div id="screen-ending" class="screen">
+      <div class="ending-content">
+        <p class="ending-label">—— 结局 ——</p>
+        <h2 id="ending-name" class="ending-name"></h2>
+        <p id="ending-char" class="ending-char"></p>
+        <p id="ending-story" class="ending-story"></p>
+        <div id="ending-attrs" class="ending-attrs"></div>
+        <div class="ending-buttons">
+          <button id="btn-replay" class="btn btn-primary">再来一局</button>
+          <button id="btn-ending-gallery" class="btn btn-secondary">结局图鉴</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-gallery" class="screen">
+      <h2 class="screen-heading">结局图鉴</h2>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      <button id="btn-gallery-back" class="btn btn-secondary gallery-back">返回</button>
+    </div>
+
+    <div id="screen-transition" class="screen">
+      <p id="transition-text" class="transition-text"></p>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
