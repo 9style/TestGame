@@ -25,8 +25,9 @@ export class Game {
       attrs: { ...char.attrs },
       hidden: { ...char.hidden },
       history: [],
-      phaseEvents: this._pickPhaseEvents(0),
+      phaseEvents: [],
     };
+    this.state.phaseEvents = this._pickPhaseEvents(0);
     this.save();
     return this.state;
   }
