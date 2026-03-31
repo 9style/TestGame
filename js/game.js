@@ -49,22 +49,13 @@ export class Game {
     if (this.state.eventIndex >= events.length) return null;
 
     const event = events[this.state.eventIndex];
-    // Filter choices: remove hidden choices whose hidden_conditions are not met
-    const visibleChoices = event.choices.filter(c => {
-      if (!c.hidden_conditions) return true;
-      return this._checkConditions(c.hidden_conditions);
-    });
-    return { ...event, choices: visibleChoices };
+    return { ...event, choices: this._getVisibleChoices(event) };
   }
 
   applyChoice(choiceIndex) {
     const event = this.state.phaseEvents[this.state.eventIndex];
     // Get the actual choice from the filtered list
-    const visibleChoices = event.choices.filter(c => {
-      if (!c.hidden_conditions) return true;
-      return this._checkConditions(c.hidden_conditions);
-    });
-    const choice = visibleChoices[choiceIndex];
+    const choice = this._getVisibleChoices(event)[choiceIndex];
     if (!choice) throw new Error(`Invalid choice index: ${choiceIndex}`);
 
     // Apply visible effects
@@ -189,6 +180,13 @@ export class Game {
   }
 
   // --- Private Helpers ---
+
+  _getVisibleChoices(event) {
+    return event.choices.filter(c => {
+      if (!c.hidden_conditions) return true;
+      return this._checkConditions(c.hidden_conditions);
+    });
+  }
 
   _pickPhaseEvents(phaseIndex) {
     const phase = this.phases[phaseIndex];

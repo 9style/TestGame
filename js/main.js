@@ -9,7 +9,10 @@ async function init() {
   const game = new Game(data);
   const ui = new UI();
 
+  let lastScreen = 'title';
+
   function showTitle() {
+    lastScreen = 'title';
     game.clearSave();
     const unlocked = game.getUnlockedEndings().length;
     ui.renderTitle(unlocked);
@@ -36,6 +39,7 @@ async function init() {
   async function handlePhaseEnd() {
     if (game.isGameComplete()) {
       const ending = game.checkEnding();
+      lastScreen = 'ending';
       ui.renderEnding(ending, game.state.characterName, game.state.attrs);
       return;
     }
@@ -81,8 +85,7 @@ async function init() {
   });
 
   ui.on('onShowGallery', () => {
-    const fromScreen = game.state ? 'ending' : 'title';
-    showGallery(fromScreen);
+    showGallery(lastScreen);
   });
 
   ui.on('onBackToTitle', () => {
