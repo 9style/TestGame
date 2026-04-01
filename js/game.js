@@ -147,6 +147,12 @@ export class Game {
     if (!raw) return false;
     try {
       this.state = JSON.parse(raw);
+      // Backward compat: add faction attrs if missing
+      if (this.state.hidden) {
+        this.state.hidden['魏'] ??= 50;
+        this.state.hidden['蜀'] ??= 50;
+        this.state.hidden['吴'] ??= 50;
+      }
       return true;
     } catch {
       return false;
