@@ -36,11 +36,25 @@ async function init() {
     );
   }
 
+  function showDeathEnding(deathEndingId) {
+    const ending = game.checkEnding();
+    lastScreen = 'ending';
+    ui.renderEnding(ending, game.state.characterName, game.state.attrs);
+  }
+
   async function handlePhaseEnd() {
     if (game.isGameComplete()) {
       const ending = game.checkEnding();
       lastScreen = 'ending';
       ui.renderEnding(ending, game.state.characterName, game.state.attrs);
+      return;
+    }
+
+    // Check for crisis before advancing to next phase
+    const crisisEvent = game.checkCrisis();
+    if (crisisEvent) {
+      game.enterCrisis(crisisEvent);
+      showCurrentEvent(); // Will render the crisis event
       return;
     }
 
@@ -59,7 +73,9 @@ async function init() {
   // --- Wire callbacks ---
 
   ui.on('onStart', () => {
-    showCharacterSelect();
+    ui.renderIntro(() => {
+      showCharacterSelect();
+    });
   });
 
   ui.on('onSelectCharacter', (characterId) => {
@@ -68,12 +84,26 @@ async function init() {
   });
 
   ui.on('onChoice', (choiceIndex) => {
-    const { result, effects } = game.applyChoice(choiceIndex);
-    ui.renderResult(result, effects);
+    const result = game.applyChoice(choiceIndex);
+    ui.renderResult(result.result, result.effects, result.isDeath, result.crisisResolved);
+
+    // If player died, we'll handle it on continue
   });
 
   ui.on('onContinue', () => {
-    if (game.isPhaseComplete()) {
+    // Check if player just died
+    if (game.isDead()) {
+      showDeathEnding(game.state.deathEnding);
+      return;
+    }
+
+    // If crisis was just resolved, advance to next phase
+    if (!game.state.inCrisis && game.isPhaseComplete()) {
+      handlePhaseEnd();
+    } else if (game.state.inCrisis) {
+      // Still in crisis (shouldn't happen normally)
+      showCurrentEvent();
+    } else if (game.isPhaseComplete()) {
       handlePhaseEnd();
     } else {
       showCurrentEvent();

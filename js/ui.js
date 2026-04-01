@@ -4,6 +4,7 @@ export class UI {
   constructor() {
     this.screens = {
       title: document.getElementById('screen-title'),
+      intro: document.getElementById('screen-intro'),
       select: document.getElementById('screen-select'),
       event: document.getElementById('screen-event'),
       result: document.getElementById('screen-result'),
@@ -46,6 +47,15 @@ export class UI {
     this.showScreen('title');
   }
 
+  // --- Intro Screen ---
+
+  renderIntro(onDone) {
+    document.getElementById('btn-intro-continue').onclick = () => {
+      onDone();
+    };
+    this.showScreen('intro');
+  }
+
   // --- Character Select ---
 
   renderCharacterSelect(characters) {
@@ -74,6 +84,15 @@ export class UI {
   // --- Event Screen ---
 
   renderEvent(event, phaseLabel, characterName, attrs) {
+    const eventScreen = this.screens.event;
+
+    // Toggle crisis mode styling
+    if (event.isCrisis) {
+      eventScreen.classList.add('crisis-mode');
+    } else {
+      eventScreen.classList.remove('crisis-mode');
+    }
+
     document.getElementById('phase-label').textContent = phaseLabel;
     document.getElementById('char-name').textContent = characterName;
     document.getElementById('attr-wu').textContent = attrs['武'];
@@ -89,12 +108,27 @@ export class UI {
 
     event.choices.forEach((choice, index) => {
       const btn = document.createElement('button');
-      btn.className = 'choice-btn';
 
-      const effectsText = Object.entries(choice.effects)
-        .filter(([, v]) => v !== 0)
-        .map(([k, v]) => `${k}${v > 0 ? '+' : ''}${v}`)
-        .join(' · ');
+      // Check if this is a danger choice (crisis_trigger or crisis_check)
+      const isDanger = choice.crisis_trigger || choice.crisis_check;
+      btn.className = `choice-btn${isDanger ? ' choice-danger' : ''}`;
+
+      // Build effects text
+      let effectsText = '';
+      if (choice.effects) {
+        effectsText = Object.entries(choice.effects)
+          .filter(([, v]) => v !== 0)
+          .map(([k, v]) => `${k}${v > 0 ? '+' : ''}${v}`)
+          .join(' · ');
+      }
+
+      // For crisis check choices, show the risk
+      if (choice.crisis_check) {
+        const checkDesc = Object.entries(choice.crisis_check)
+          .map(([k, v]) => `${k}≥${v.min}`)
+          .join('且');
+        effectsText = `⚠️ 需要判定：${checkDesc}`;
+      }
 
       btn.innerHTML = `
         <div class="choice-text">${choice.text}</div>
@@ -111,11 +145,36 @@ export class UI {
 
   // --- Result Screen ---
 
-  renderResult(resultText, effects) {
+  renderResult(resultText, effects, isDeath = false, crisisResolved = false) {
+    const resultContent = document.querySelector('.result-content');
+
+    // Add death or crisis-resolved styling
+    if (isDeath) {
+      resultContent.classList.add('death-result');
+      resultContent.classList.remove('crisis-resolved');
+    } else if (crisisResolved) {
+      resultContent.classList.add('crisis-resolved');
+      resultContent.classList.remove('death-result');
+    } else {
+      resultContent.classList.remove('death-result', 'crisis-resolved');
+    }
+
     document.getElementById('result-text').textContent = resultText;
 
     const container = document.getElementById('result-effects');
     container.innerHTML = '';
+
+    if (isDeath) {
+      const badge = document.createElement('span');
+      badge.className = 'effect-badge death';
+      badge.textContent = '💀 命陨';
+      container.appendChild(badge);
+    } else if (crisisResolved) {
+      const badge = document.createElement('span');
+      badge.className = 'effect-badge positive';
+      badge.textContent = '✅ 危机化解';
+      container.appendChild(badge);
+    }
 
     for (const [attr, delta] of Object.entries(effects)) {
       const badge = document.createElement('span');
@@ -124,6 +183,8 @@ export class UI {
       container.appendChild(badge);
     }
 
+    const btnText = isDeath ? '查看结局' : '继续';
+    document.getElementById('btn-continue').textContent = btnText;
     document.getElementById('btn-continue').onclick = () => {
       this.callbacks.onContinue?.();
     };
@@ -145,6 +206,18 @@ export class UI {
   // --- Ending Screen ---
 
   renderEnding(ending, characterName, attrs) {
+    const endingContent = document.querySelector('.ending-content');
+
+    // Add death ending styling
+    if (ending.isDeath) {
+      endingContent.classList.add('death-ending');
+    } else {
+      endingContent.classList.remove('death-ending');
+    }
+
+    const labelEl = document.querySelector('.ending-label');
+    labelEl.textContent = ending.isDeath ? '—— 夭折 ——' : '—— 结局 ——';
+
     document.getElementById('ending-name').textContent = ending.name;
     document.getElementById('ending-char').textContent = `${characterName} · 已解锁`;
     document.getElementById('ending-epitaph').textContent = ending.epitaph || '';
@@ -152,7 +225,7 @@ export class UI {
 
     const attrsContainer = document.getElementById('ending-attrs');
     attrsContainer.innerHTML = `
-      <div class="ending-attrs-label">最终属性</div>
+      <div class="ending-attrs-label">${ending.isDeath ? '临终属性' : '最终属性'}</div>
       <div class="ending-attrs-values">
         <span>⚔️ 武 <b>${attrs['武']}</b></span>
         <span>📖 智 <b>${attrs['智']}</b></span>
@@ -179,7 +252,8 @@ export class UI {
 
     for (const ending of endingsGallery) {
       const card = document.createElement('div');
-      card.className = `gallery-card ${ending.unlocked ? '' : 'locked'}`;
+      const deathClass = ending.isDeath ? ' gallery-death' : '';
+      card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}`;
       card.innerHTML = `
         <div class="gallery-card-name">${ending.unlocked ? ending.name : '???'}</div>
         <div class="gallery-card-desc">${ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁'}</div>

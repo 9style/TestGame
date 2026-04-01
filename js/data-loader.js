@@ -7,6 +7,8 @@ const DATA_FILES = {
   'events-rise': 'data/events-rise.json',
   'events-war': 'data/events-war.json',
   'events-final': 'data/events-final.json',
+  'events-character': 'data/events-character.json',
+  'events-crisis': 'data/events-crisis.json',
 };
 
 const PHASE_KEYS = ['events-youth', 'events-rise', 'events-war', 'events-final'];
@@ -28,5 +30,7 @@ export async function loadAllData() {
     characters: dataMap.characters,
     endings: dataMap.endings.endings,
     phases: PHASE_KEYS.map(key => dataMap[key]),
+    characterEvents: dataMap['events-character'],
+    crisisEvents: dataMap['events-crisis'],
   };
 }
