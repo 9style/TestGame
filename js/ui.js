@@ -60,6 +60,7 @@ export class UI {
         <div class="char-name">${char.name}</div>
         <div class="char-attrs">武${char.attrs['武']} 智${char.attrs['智']} 德${char.attrs['德']} 魅${char.attrs['魅']}</div>
         <div class="char-desc">${char.title}</div>
+        <div class="char-origin-desc">${char.desc}</div>
       `;
       card.onclick = () => {
         this.callbacks.onSelectCharacter?.(char.id);
@@ -146,6 +147,7 @@ export class UI {
   renderEnding(ending, characterName, attrs) {
     document.getElementById('ending-name').textContent = ending.name;
     document.getElementById('ending-char').textContent = `${characterName} · 已解锁`;
+    document.getElementById('ending-epitaph').textContent = ending.epitaph || '';
     document.getElementById('ending-story').textContent = ending.story;
 
     const attrsContainer = document.getElementById('ending-attrs');
