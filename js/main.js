@@ -32,21 +32,22 @@ async function init() {
       event,
       game.getPhaseLabel(),
       game.state.characterName,
-      game.state.attrs
+      game.state.attrs,
+      game.state.hidden
     );
   }
 
   function showDeathEnding(deathEndingId) {
     const ending = game.checkEnding();
     lastScreen = 'ending';
-    ui.renderEnding(ending, game.state.characterName, game.state.attrs);
+    ui.renderEnding(ending, game.state.characterName, game.state.attrs, game.state.hidden);
   }
 
   async function handlePhaseEnd() {
     if (game.isGameComplete()) {
       const ending = game.checkEnding();
       lastScreen = 'ending';
-      ui.renderEnding(ending, game.state.characterName, game.state.attrs);
+      ui.renderEnding(ending, game.state.characterName, game.state.attrs, game.state.hidden);
       return;
     }
 

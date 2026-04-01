@@ -184,6 +184,19 @@ html, body {
 #attr-de { color: var(--green); }
 #attr-mei { color: var(--orange); }
 
+.faction-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 6px 15px;
+  font-size: 12px;
+  background: var(--bg-dark);
+  border-bottom: 1px solid var(--border);
+}
+
+#faction-wei { color: #5b9bd5; }
+#faction-shu { color: #e74c3c; }
+#faction-wu { color: #2ecc71; }
+
 .event-content { padding: 20px 15px; }
 .event-title {
   font-size: 16px;
@@ -421,4 +434,12 @@ html, body {
 }
 .gallery-card.gallery-death .gallery-card-name {
   color: var(--red);
+}
+
+/* === Gallery Faction Cards === */
+.gallery-card.gallery-faction {
+  border-color: #5b9bd5;
+}
+.gallery-card.gallery-faction .gallery-card-name {
+  color: #5b9bd5;
 }

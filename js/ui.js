@@ -83,7 +83,7 @@ export class UI {
 
   // --- Event Screen ---
 
-  renderEvent(event, phaseLabel, characterName, attrs) {
+  renderEvent(event, phaseLabel, characterName, attrs, hidden) {
     const eventScreen = this.screens.event;
 
     // Toggle crisis mode styling
@@ -99,6 +99,10 @@ export class UI {
     document.getElementById('attr-zhi').textContent = attrs['智'];
     document.getElementById('attr-de').textContent = attrs['德'];
     document.getElementById('attr-mei').textContent = attrs['魅'];
+
+    document.getElementById('faction-wei').textContent = hidden?.['魏'] ?? 50;
+    document.getElementById('faction-shu').textContent = hidden?.['蜀'] ?? 50;
+    document.getElementById('faction-wu').textContent = hidden?.['吴'] ?? 50;
 
     document.getElementById('event-title').textContent = event.title;
     document.getElementById('event-desc').textContent = event.description;
@@ -205,7 +209,7 @@ export class UI {
 
   // --- Ending Screen ---
 
-  renderEnding(ending, characterName, attrs) {
+  renderEnding(ending, characterName, attrs, hidden) {
     const endingContent = document.querySelector('.ending-content');
 
     // Add death ending styling
@@ -232,6 +236,12 @@ export class UI {
         <span>🏛️ 德 <b>${attrs['德']}</b></span>
         <span>✨ 魅 <b>${attrs['魅']}</b></span>
       </div>
+      <div class="ending-attrs-label" style="margin-top: 8px;">势力倾向</div>
+      <div class="ending-attrs-values ending-faction-values">
+        <span>⚔ 魏 <b style="color:#5b9bd5">${hidden?.['魏'] ?? 50}</b></span>
+        <span>🏯 蜀 <b style="color:#e74c3c">${hidden?.['蜀'] ?? 50}</b></span>
+        <span>⛵ 吴 <b style="color:#2ecc71">${hidden?.['吴'] ?? 50}</b></span>
+      </div>
     `;
 
     document.getElementById('btn-replay').onclick = () => {
@@ -253,7 +263,8 @@ export class UI {
     for (const ending of endingsGallery) {
       const card = document.createElement('div');
       const deathClass = ending.isDeath ? ' gallery-death' : '';
-      card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}`;
+      const factionClass = ['wei_minister', 'shu_guardian', 'wu_admiral'].includes(ending.id) ? ' gallery-faction' : '';
+      card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}`;
       card.innerHTML = `
         <div class="gallery-card-name">${ending.unlocked ? ending.name : '???'}</div>
         <div class="gallery-card-desc">${ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁'}</div>
