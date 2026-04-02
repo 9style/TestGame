@@ -186,11 +186,11 @@ def gen_chapter4(endings_data: dict) -> str:
     endings = endings_data["endings"]
     lines = ["# 第四章：结局图鉴\n"]
     lines.append(
-        "> 共 **17 种结局**（4 种死亡 + 13 种正常）。"
+        "> 共 **20 种结局**（4 种死亡 + 16 种正常）。"
         "正常结局按顺序匹配，满足条件的第一个生效。\n"
     )
 
-    lines.append("## 正常结局（13种）\n")
+    lines.append("## 正常结局（16种）\n")
     lines.append("| 结局 | 图标 | 关键解锁条件 | 难度 |")
     lines.append("|------|------|------------|------|")
     normal_count = 0
@@ -232,7 +232,7 @@ def gen_chapter5(endings_data: dict) -> str:
     endings = endings_data["endings"]
     lines = ["# 第五章：全结局路线指南\n"]
     lines.append(
-        "> 本章为高玩提供每个结局的详细路线建议。"
+        "> 本章为高玩提供 16 种正常结局的详细路线建议。"
         "死亡结局通过危机判定失败触发，不单独列出路线。\n"
     )
     for e in endings:
