@@ -66,7 +66,7 @@ export class UI {
       const card = document.createElement('div');
       card.className = 'char-card';
       card.innerHTML = `
-        <div class="char-icon">${char.icon}</div>
+        <img class="char-portrait" src="images/characters/${char.id}.png" alt="${char.name}" onerror="this.outerHTML='<div class=\\'char-icon\\'>${char.icon}</div>'">
         <div class="char-name">${char.name}</div>
         <div class="char-attrs">武${char.attrs['武']} 智${char.attrs['智']} 德${char.attrs['德']} 魅${char.attrs['魅']}</div>
         <div class="char-desc">${char.title}</div>
@@ -106,6 +106,19 @@ export class UI {
 
     document.getElementById('event-title').textContent = event.title;
     document.getElementById('event-desc').textContent = event.description;
+
+    // Show crisis illustration if applicable
+    const existingIllustration = document.querySelector('.event-illustration');
+    if (existingIllustration) existingIllustration.remove();
+    if (event.isCrisis && event.crisis_type) {
+      const img = document.createElement('img');
+      img.className = 'event-illustration';
+      img.src = `images/crisis/${event.crisis_type}.png`;
+      img.alt = event.title;
+      img.onerror = () => img.remove();
+      const eventContent = document.querySelector('.event-content');
+      eventContent.insertBefore(img, document.getElementById('event-title'));
+    }
 
     const container = document.getElementById('choices-container');
     container.innerHTML = '';
@@ -198,7 +211,13 @@ export class UI {
 
   // --- Transition Screen ---
 
-  renderTransition(text, durationMs = 2500) {
+  renderTransition(text, phaseName, durationMs = 2500) {
+    const screen = this.screens.transition;
+    if (phaseName) {
+      screen.style.backgroundImage = `url('images/phases/${phaseName}.png')`;
+    } else {
+      screen.style.backgroundImage = '';
+    }
     document.getElementById('transition-text').textContent = text;
     this.showScreen('transition');
 
@@ -224,6 +243,19 @@ export class UI {
 
     document.getElementById('ending-name').textContent = ending.name;
     document.getElementById('ending-char').textContent = `${characterName} · 已解锁`;
+
+    // Show ending illustration
+    const existingImg = document.getElementById('ending-illustration');
+    if (existingImg) existingImg.remove();
+    const img = document.createElement('img');
+    img.id = 'ending-illustration';
+    img.className = 'ending-illustration';
+    img.src = `images/endings/${ending.id}.png`;
+    img.alt = ending.name;
+    img.onerror = () => img.remove();
+    const charEl = document.getElementById('ending-char');
+    charEl.parentNode.insertBefore(img, charEl.nextSibling);
+
     document.getElementById('ending-epitaph').textContent = ending.epitaph || '';
     document.getElementById('ending-story').textContent = ending.story;
 
@@ -266,6 +298,7 @@ export class UI {
       const factionClass = ['wei_minister', 'shu_guardian', 'wu_admiral'].includes(ending.id) ? ' gallery-faction' : '';
       card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}`;
       card.innerHTML = `
+        <img class="gallery-card-thumb" src="images/endings/${ending.id}.png" alt="${ending.unlocked ? ending.name : '???'}" onerror="this.style.display='none'">
         <div class="gallery-card-name">${ending.unlocked ? ending.name : '???'}</div>
         <div class="gallery-card-desc">${ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁'}</div>
       `;

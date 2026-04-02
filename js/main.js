@@ -43,6 +43,8 @@ async function init() {
     ui.renderEnding(ending, game.state.characterName, game.state.attrs, game.state.hidden);
   }
 
+  const PHASE_IMAGE_NAMES = ['youth', 'rise', 'war', 'final'];
+
   async function handlePhaseEnd() {
     if (game.isGameComplete()) {
       const ending = game.checkEnding();
@@ -61,7 +63,8 @@ async function init() {
 
     const transitionText = game.advancePhase();
     if (transitionText) {
-      await ui.renderTransition(transitionText);
+      const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
+      await ui.renderTransition(transitionText, phaseName);
     }
     showCurrentEvent();
   }

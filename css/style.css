@@ -155,7 +155,8 @@ html, body {
   transition: border-color 0.2s;
 }
 .char-card:active { border-color: var(--gold); }
-.char-icon { font-size: 28px; margin-bottom: 6px; }
+.char-icon { font-size: 28px; margin-bottom: 6px; line-height: 1; }
+.char-portrait { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-dark); margin-bottom: 6px; }
 .char-name { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
 .char-attrs { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
 .char-desc { font-size: 10px; color: var(--text-dim); margin-bottom: 4px; }
@@ -347,6 +348,16 @@ html, body {
 .gallery-back { margin: 0 15px 20px; }
 
 /* === Transition Screen === */
+#screen-transition {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.transition-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 35, 0.55);
+}
 .transition-text {
   flex: 1;
   display: flex;
@@ -358,6 +369,9 @@ html, body {
   padding: 40px;
   line-height: 2;
   animation: fadeIn 1s ease-in;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
 /* === Animations === */
@@ -442,4 +456,32 @@ html, body {
 }
 .gallery-card.gallery-faction .gallery-card-name {
   color: #5b9bd5;
+}
+
+/* === Illustrations === */
+.ending-illustration {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.event-illustration {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.gallery-card-thumb {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.gallery-card.locked .gallery-card-thumb {
+  filter: brightness(0.15);
 }
