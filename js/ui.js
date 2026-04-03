@@ -66,7 +66,7 @@ export class UI {
       const card = document.createElement('div');
       card.className = 'char-card';
       card.innerHTML = `
-        <img class="char-portrait" src="images/characters/${char.id}.png" alt="${char.name}" onerror="this.outerHTML='<div class=\\'char-icon\\'>${char.icon}</div>'">
+        <img class="char-portrait" src="images/characters/${char.id}.webp" alt="${char.name}" onerror="this.outerHTML='<div class=\\'char-icon\\'>${char.icon}</div>'">
         <div class="char-name">${char.name}</div>
         <div class="char-attrs">武${char.attrs['武']} 智${char.attrs['智']} 德${char.attrs['德']} 魅${char.attrs['魅']}</div>
         <div class="char-desc">${char.title}</div>
@@ -111,7 +111,7 @@ export class UI {
     const existingIllustration = document.querySelector('.event-illustration');
     if (existingIllustration) existingIllustration.remove();
     const imgSrc = event.isCrisis && event.crisis_type
-      ? `images/crisis/${event.crisis_type}.png`
+      ? `images/crisis/${event.crisis_type}.webp`
       : event.image || null;
     if (imgSrc) {
       const img = document.createElement('img');
@@ -219,7 +219,7 @@ export class UI {
   renderTransition(text, phaseName, durationMs = 2500) {
     const screen = this.screens.transition;
     if (phaseName) {
-      screen.style.backgroundImage = `url('images/phases/${phaseName}.png')`;
+      screen.style.backgroundImage = `url('images/phases/${phaseName}.webp')`;
     } else {
       screen.style.backgroundImage = '';
     }
@@ -255,7 +255,7 @@ export class UI {
     const img = document.createElement('img');
     img.id = 'ending-illustration';
     img.className = 'ending-illustration';
-    img.src = `images/endings/${ending.id}.png`;
+    img.src = `images/endings/${ending.id}.webp`;
     img.alt = ending.name;
     img.onerror = () => img.remove();
     const charEl = document.getElementById('ending-char');
@@ -303,7 +303,7 @@ export class UI {
       const factionClass = ['wei_minister', 'shu_guardian', 'wu_admiral'].includes(ending.id) ? ' gallery-faction' : '';
       card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}`;
       card.innerHTML = `
-        <img class="gallery-card-thumb" src="images/endings/${ending.id}.png" alt="${ending.unlocked ? ending.name : '???'}" onerror="this.style.display='none'">
+        <img class="gallery-card-thumb" src="images/endings/${ending.id}.webp" alt="${ending.unlocked ? ending.name : '???'}" onerror="this.style.display='none'">
         <div class="gallery-card-name">${ending.unlocked ? ending.name : '???'}</div>
         <div class="gallery-card-desc">${ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁'}</div>
       `;

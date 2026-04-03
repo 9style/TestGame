@@ -26,7 +26,7 @@
     {
       "id": "final_01",
       "title": "最终决战",
-      "image": "images/events/final_01.png",
+      "image": "images/events/final_01.webp",
       "description": "天下最后的两大势力终于要做个了断。这将是一场决定天下归属的终极之战。你被推上了最前线。",
       "conditions": {},
       "choices": [
@@ -53,7 +53,7 @@
     {
       "id": "final_02",
       "title": "托孤之重",
-      "image": "images/events/final_02.png",
+      "image": "images/events/final_02.webp",
       "description": "你的主公病重，将年幼的世子托付给你。朝中大臣有的支持你辅政，有的心怀叵测暗中结党。",
       "conditions": {},
       "choices": [
@@ -229,7 +229,7 @@
     {
       "id": "final_wuzhangyuan",
       "title": "五丈原",
-      "image": "images/events/final_wuzhangyuan.png",
+      "image": "images/events/final_wuzhangyuan.webp",
       "description": "诸葛亮第六次北伐，屯兵五丈原与司马懿对峙。然而丞相积劳成疾，命不久矣。秋风萧瑟的营帐中，诸葛亮躺在病榻上，将最后的嘱托交付众将。他看向你，苍白的脸上露出一丝微笑：\"事到如今，你意如何？\"",
       "conditions": { "蜀": { "min": 40 } },
       "choices": [
@@ -256,7 +256,7 @@
     {
       "id": "final_simayi",
       "title": "高平陵之变",
-      "image": "images/events/final_simayi.png",
+      "image": "images/events/final_simayi.webp",
       "description": "司马懿终于按捺不住野心，趁大将军曹爽随魏帝外出祭祖之机，发动政变控制了洛阳。曹魏宗室人人自危，朝堂之上暗流涌动。你在这场惊天巨变中，必须立刻选择立场——站在司马氏一边，还是效忠曹氏正统？",
       "conditions": { "魏": { "min": 40 } },
       "choices": [
@@ -313,7 +313,7 @@
     {
       "id": "final_unification",
       "title": "三国归晋",
-      "image": "images/events/final_unification.png",
+      "image": "images/events/final_unification.webp",
       "description": "天下大势，分久必合。司马氏篡魏立晋，随后灭蜀平吴，三国归于一统。新朝初立，百废待兴。你站在洛阳城头，望着飘扬的晋旗，回想起自己这一路走来的风风雨雨。身边的旧友已所剩无几，你需要为自己的余生做出最后的选择。",
       "conditions": {},
       "choices": [
