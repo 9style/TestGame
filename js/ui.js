@@ -107,14 +107,19 @@ export class UI {
     document.getElementById('event-title').textContent = event.title;
     document.getElementById('event-desc').textContent = event.description;
 
-    // Show crisis illustration if applicable
+    // Show event illustration (crisis or regular event image)
     const existingIllustration = document.querySelector('.event-illustration');
     if (existingIllustration) existingIllustration.remove();
-    if (event.isCrisis && event.crisis_type) {
+    const imgSrc = event.isCrisis && event.crisis_type
+      ? `images/crisis/${event.crisis_type}.png`
+      : event.image || null;
+    if (imgSrc) {
       const img = document.createElement('img');
       img.className = 'event-illustration';
-      img.src = `images/crisis/${event.crisis_type}.png`;
+      img.src = imgSrc;
       img.alt = event.title;
+      img.style.opacity = '0';
+      img.onload = () => { img.style.transition = 'opacity 0.5s'; img.style.opacity = '1'; };
       img.onerror = () => img.remove();
       const eventContent = document.querySelector('.event-content');
       eventContent.insertBefore(img, document.getElementById('event-title'));
