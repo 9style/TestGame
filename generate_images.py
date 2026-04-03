@@ -21,7 +21,7 @@ import sys
 CONFIG = {
     "api_key": os.environ.get("ARK_API_KEY", "sk-OTykMGa9eVtXUQlHOa9PxZPHtDSFyXHgXe8DCc4bm4Z8hrWY"),
     "model": "gemini-3-pro-image-preview",
-    "api_url": "https://ark.cn-beijing.volces.com/api/v3/images/generations",
+    "api_url": "https://ai.leihuo.netease.com/v1/chat/completions",
     "output_dir": "images",
     "delay_seconds": 2,  # 请求间隔，避免触发限流
     "retry_times": 3,
@@ -307,21 +307,20 @@ PROMPTS = {
 
 
 def generate_image(prompt: str, size: str = "2560x1440") -> bytes | None:
-    """调用火山方舟 Seedream API 生成图片，返回图片字节数据"""
+    """调用 OpenAI 兼容的 chat completions API 生成图片，返回图片字节数据"""
     headers = {
         "Authorization": f"Bearer {CONFIG['api_key']}",
         "Content-Type": "application/json",
     }
 
-    # 尺寸转换为宽高
-    w, h = size.split("x")
-
     payload = {
         "model": CONFIG["model"],
-        "prompt": prompt,
-        "size": size,
-        "response_format": "b64_json",
-        "n": 1,
+        "messages": [
+            {
+                "role": "user",
+                "content": f"Generate an image: {prompt}. Aspect ratio: {size.replace('x', ':')}."
+            }
+        ],
     }
 
     for attempt in range(CONFIG["retry_times"]):
@@ -335,8 +334,39 @@ def generate_image(prompt: str, size: str = "2560x1440") -> bytes | None:
 
             if resp.status_code == 200:
                 data = resp.json()
-                b64 = data["data"][0]["b64_json"]
-                return base64.b64decode(b64)
+                # 从 chat completions 响应中提取 base64 图片
+                content = data["choices"][0]["message"]["content"]
+                # 内容可能是纯文本+图片混合，提取图片部分
+                if isinstance(content, list):
+                    # multimodal 响应格式：[{type: "image_url", image_url: {url: "data:..."}}]
+                    for part in content:
+                        if isinstance(part, dict):
+                            if part.get("type") == "image_url":
+                                url = part["image_url"]["url"]
+                                if url.startswith("data:"):
+                                    b64 = url.split(",", 1)[1]
+                                    return base64.b64decode(b64)
+                            elif "image" in part:
+                                # 备用格式
+                                img_data = part["image"]
+                                if isinstance(img_data, dict) and "url" in img_data:
+                                    url = img_data["url"]
+                                    if url.startswith("data:"):
+                                        b64 = url.split(",", 1)[1]
+                                        return base64.b64decode(b64)
+                elif isinstance(content, str):
+                    # 可能是 inline_data 格式或纯 base64
+                    import re
+                    # 尝试从 markdown 图片语法中提取 base64
+                    match = re.search(r'data:image/[^;]+;base64,([A-Za-z0-9+/=\s]+)', content)
+                    if match:
+                        b64 = match.group(1).replace('\n', '').replace(' ', '')
+                        return base64.b64decode(b64)
+
+                # 如果上面都没匹配到，打印响应结构供调试
+                print(f"  [调试] 无法从响应中提取图片，响应结构：{json.dumps(data, ensure_ascii=False)[:300]}")
+                return None
+
             elif resp.status_code == 429:
                 wait = (attempt + 1) * 5
                 print(f"  [限流] 等待 {wait} 秒后重试...")
