@@ -6,6 +6,7 @@
     {
       "id": "war_01",
       "title": "赤壁风云",
+      "image": "images/events/war_01.png",
       "description": "曹操率八十万大军南下，势如破竹。孙刘联军在赤壁对峙曹军。周瑜意气风发，指挥东吴水师严阵以待；诸葛亮羽扇纶巾，在帐中运筹帷幄。你被两位军师同时召见，各有任务交付。",
       "conditions": {},
       "choices": [
@@ -329,6 +330,7 @@
     {
       "id": "war_chibi",
       "title": "赤壁决战",
+      "image": "images/events/war_chibi.png",
       "description": "赤壁之战进入最关键的时刻。周瑜已定下火攻大计，黄盖诈降接近曹操水寨。东南风起，火船即将出发。你站在岸边，面临最后的选择——是助孙刘联军一臂之力，还是暗中为曹操通风报信？",
       "conditions": {},
       "choices": [
@@ -355,6 +357,7 @@
     {
       "id": "war_changbanpo",
       "title": "长坂坡",
+      "image": "images/events/war_changbanpo.png",
       "description": "曹操大军追击刘备，在长坂坡展开惨烈的追杀。刘备的妻儿和百姓在乱军中失散。常山赵子龙单枪匹马杀入重围，在百万军中七进七出，怀抱阿斗杀出一条血路。你远远看到赵云浑身浴血，战马已经力竭，身后曹军追兵不止。",
       "conditions": {},
       "choices": [
@@ -386,6 +389,7 @@
     {
       "id": "war_dingjunshan",
       "title": "定军山之战",
+      "image": "images/events/war_dingjunshan.png",
       "description": "刘备与曹操争夺汉中，老将黄忠在定军山与曹魏大将夏侯渊对峙。黄忠虽年迈，但虎威不减，法正在山上举旗指挥，准备发动致命一击。你身处两军阵前，这一战将决定汉中的归属。",
       "conditions": {},
       "choices": [
@@ -413,6 +417,7 @@
     {
       "id": "war_hefei",
       "title": "合肥之战",
+      "image": "images/events/war_hefei.png",
       "description": "张辽率八百骑兵突袭孙权十万大军于合肥，威震逍遥津。孙权的坐骑被困在断桥之上，险些被擒。整个江东为之震动。你正在合肥城外，亲眼目睹了这场以少胜多的经典战役。",
       "conditions": {},
       "choices": [
@@ -439,6 +444,7 @@
     {
       "id": "war_guanyu_maicheng",
       "title": "关羽败走麦城",
+      "image": "images/events/war_guanyu_maicheng.png",
       "description": "关羽大意失荆州，被吕蒙白衣渡江偷袭后方。前有曹军徐晃拦截，后有东吴陆逊截断退路，关羽被困麦城，兵少粮尽。这位威震华夏的武圣，正面临人生最大的危机。消息传到你耳中——关羽正在等待救援。",
       "conditions": {},
       "choices": [
@@ -470,6 +476,7 @@
     {
       "id": "war_baiyi",
       "title": "白衣渡江",
+      "image": "images/events/war_baiyi.png",
       "description": "东吴大都督吕蒙装病退隐，暗中以陆逊替代。陆逊以书生之姿麻痹关羽，吕蒙则率精兵伪装商队白衣渡江，奇袭荆州。这场精心策划的阴谋正在你眼前展开——你提前得知了东吴的计划。",
       "conditions": {},
       "choices": [

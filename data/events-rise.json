@@ -32,6 +32,7 @@
     {
       "id": "rise_02",
       "title": "初战告捷",
+      "image": "images/events/rise_02.png",
       "description": "你迎来了人生中的第一场大战。敌军来势汹汹，兵力是你方的两倍。主帅问你有何良策。",
       "conditions": {},
       "choices": [
@@ -84,6 +85,7 @@
     {
       "id": "rise_04",
       "title": "桃园结义",
+      "image": "images/events/rise_04.png",
       "description": "你在一次战斗中与刘备并肩作战，共退强敌。战后，刘备拉着你的手说：\"今日同生共死，足见兄台肝胆。不知可愿与备结为兄弟？\"他身旁的关羽和张飞也抱拳相邀。营外正有一片桃林，花开正艳。",
       "conditions": {},
       "choices": [
@@ -177,6 +179,7 @@
     {
       "id": "rise_08",
       "title": "攻城之战",
+      "image": "images/events/rise_08.png",
       "description": "你奉命攻取一座战略要城。城池坚固，守军拼死抵抗。连攻三日未下，将士疲惫不堪。",
       "conditions": {},
       "choices": [
@@ -257,6 +260,7 @@
     {
       "id": "rise_guandu",
       "title": "官渡之战",
+      "image": "images/events/rise_guandu.png",
       "description": "曹操与袁绍在官渡对峙，一场决定北方命运的大战即将打响。曹操兵少粮缺，却以奇谋应敌；袁绍兵多将广，但内部矛盾重重。双方都在暗中拉拢各方势力，你也被卷入了这场博弈。",
       "conditions": {},
       "choices": [
@@ -284,6 +288,7 @@
     {
       "id": "rise_sangu",
       "title": "三顾茅庐",
+      "image": "images/events/rise_sangu.png",
       "description": "刘备为求贤才，三次亲往隆中拜访隐居的诸葛亮。你恰好在隆中一带游历，亲眼目睹了这场千古佳话。第三次拜访时，诸葛亮终于开门迎客。刘备邀你一同入内旁听。",
       "conditions": {},
       "choices": [
@@ -311,6 +316,7 @@
     {
       "id": "rise_sunce_jiangdong",
       "title": "小霸王平江东",
+      "image": "images/events/rise_sunce_jiangdong.png",
       "description": "孙策承父志，以传国玉玺向袁术借兵，渡江南下平定江东。他以少胜多，所向披靡，被人称为\"小霸王\"。你与孙策在一次酒宴上偶遇，他豪爽地拍着桌子说：\"天下英雄，唯你我也！兄台可愿与策同行，共取江东？\"",
       "conditions": {},
       "choices": [
@@ -365,6 +371,7 @@
     {
       "id": "rise_diaochan",
       "title": "连环计",
+      "image": "images/events/rise_diaochan.png",
       "description": "你无意中发现了司徒王允的一个惊天阴谋：他正在利用养女貂蝉，施展美人计离间董卓与吕布。貂蝉以倾城之姿周旋于二人之间，一场足以改变天下格局的连环计正在悄然展开。你目睹了貂蝉在月下独自垂泪的一幕。",
       "conditions": {},
       "choices": [
