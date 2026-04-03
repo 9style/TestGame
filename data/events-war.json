@@ -33,6 +33,7 @@
     {
       "id": "war_02",
       "title": "间谍风波",
+      "image": "images/events/war_02.webp",
       "description": "你的心腹部下被人揭发是敌方安插的间谍。证据确凿，但此人跟随你多年，立过不少战功……",
       "conditions": {},
       "choices": [
@@ -60,6 +61,7 @@
     {
       "id": "war_03",
       "title": "权臣之争",
+      "image": "images/events/war_03.webp",
       "description": "你的功勋越来越大，朝中有人开始嫉妒。一位权臣在主公面前进谗言，说你有谋反之心。主公召你进宫问话。",
       "conditions": {},
       "choices": [
@@ -86,6 +88,7 @@
     {
       "id": "war_04",
       "title": "百姓请命",
+      "image": "images/events/war_04.webp",
       "description": "你攻下一座城池后，发现城中百姓正在遭受瘟疫之苦。你的军医有限，如果全力救治百姓，军队的战斗力会受到影响。",
       "conditions": {},
       "choices": [
@@ -112,6 +115,7 @@
     {
       "id": "war_05",
       "title": "盟友背叛",
+      "image": "images/events/war_05.webp",
       "description": "你最信任的盟友突然倒戈，率军偷袭了你的后方大营。你损失惨重，不得不面对一个痛苦的选择。",
       "conditions": {},
       "choices": [
@@ -149,6 +153,7 @@
     {
       "id": "war_06",
       "title": "称王之议",
+      "image": "images/events/war_06.webp",
       "description": "你的势力已经足够强大。部下们纷纷劝你称王建制，以正名分。这一步一旦迈出，就再也回不了头了。",
       "conditions": {},
       "choices": [
@@ -196,6 +201,7 @@
     {
       "id": "war_09",
       "title": "战时暴行",
+      "image": "images/events/war_09.webp",
       "description": "大军历经苦战终于攻克这座顽固设防的城池，伤亡惨重。部将们怒火中烧，请求屠城以泄士兵怒火，并震慑周边仍在抵抗的城池。这个决定，一旦做出就再无挽回。",
       "conditions": {},
       "choices": [
@@ -222,6 +228,7 @@
     {
       "id": "war_10",
       "title": "主公危难",
+      "image": "images/events/war_10.webp",
       "description": "紧急军报：你的主公在前线遭遇伏击，身陷重围，形势危急。你手中握有一支完整的精锐援军，是他唯一的希望。然而，敌方显然早有准备，援救之路早已布下重兵——贸然驰援，你的军队也极可能全军覆没。",
       "conditions": {},
       "choices": [

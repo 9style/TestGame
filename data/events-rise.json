@@ -6,6 +6,7 @@
     {
       "id": "rise_01",
       "title": "投奔明主",
+      "image": "images/events/rise_01.webp",
       "description": "你的才能引起了几方势力的关注。一位使者带着重礼前来，邀你加入他的主公麾下。这是你踏入天下棋局的第一步。",
       "conditions": {},
       "choices": [
@@ -59,6 +60,7 @@
     {
       "id": "rise_03",
       "title": "俘虏之争",
+      "image": "images/events/rise_03.webp",
       "description": "一场大胜之后，你军俘虏了数千敌兵。关于如何处置俘虏，军中意见不一。主帅让你做出决定。",
       "conditions": {},
       "choices": [
@@ -107,6 +109,7 @@
     {
       "id": "rise_05",
       "title": "粮草危机",
+      "image": "images/events/rise_05.webp",
       "description": "大军驻扎数月，粮草即将告罄。补给线被敌军切断，军心开始动摇。你必须想办法解决粮草问题。",
       "conditions": {},
       "choices": [
@@ -133,6 +136,7 @@
     {
       "id": "rise_06",
       "title": "谋士来投",
+      "image": "images/events/rise_06.webp",
       "description": "一位自称精通天文地理、兵法谋略的文士前来投奔。他才华横溢但性格高傲，要求担任军师之位。",
       "conditions": {},
       "choices": [
@@ -159,6 +163,7 @@
     {
       "id": "rise_07",
       "title": "美人计",
+      "image": "images/events/rise_07.webp",
       "description": "敌方派来一位绝色美人作为和亲使者，实则暗藏刺杀之意。你的侍卫发现了端倪，向你禀报。",
       "conditions": {},
       "choices": [

@@ -34,6 +34,7 @@
     {
       "id": "youth_02",
       "title": "拜师学艺",
+      "image": "images/events/youth_02.webp",
       "description": "你的名声渐渐传开，两位名师同时向你抛出橄榄枝：一位是精通兵法韬略的隐士，一位是武艺高强的江湖侠客。",
       "conditions": {},
       "choices": [
@@ -54,6 +55,7 @@
     {
       "id": "youth_03",
       "title": "市集风波",
+      "image": "images/events/youth_03.webp",
       "description": "你在市集上看到一个恶霸正在欺压一个卖菜的老者，强行压低菜价不说，还推搡老人。周围的人都敢怒不敢言。",
       "conditions": {},
       "choices": [
@@ -107,6 +109,7 @@
     {
       "id": "youth_05",
       "title": "竹林论道",
+      "image": "images/events/youth_05.webp",
       "description": "你偶遇几位游学的文士在竹林中辩论天下大势。他们邀请你加入讨论，问你一个问题：\"乱世之中，何为英雄？\"",
       "conditions": {},
       "choices": [
@@ -133,6 +136,7 @@
     {
       "id": "youth_06",
       "title": "流民之苦",
+      "image": "images/events/youth_06.webp",
       "description": "连年战乱，大量流民涌入你所在的小镇。他们衣衫褴褛、饥寒交迫。镇上的粮食已经不多了……",
       "conditions": {},
       "choices": [
@@ -234,6 +238,7 @@
     {
       "id": "youth_orphan",
       "title": "战火孤儿",
+      "image": "images/events/youth_orphan.webp",
       "description": "路过一座被战火焚毁的村庄，你在断壁残垣中听到了微弱的哭泣声。循声找去，一个衣衫褴褛的孩童蜷缩在倒塌的房梁下，双眼通红，浑身是灰。他的父母已不知去向。",
       "conditions": {},
       "choices": [

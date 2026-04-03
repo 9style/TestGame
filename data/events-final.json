@@ -6,6 +6,7 @@
     {
       "id": "final_07",
       "title": "绝境求生",
+      "image": "images/events/final_07.webp",
       "description": "终局之战，你率军深入敌境，却中了埋伏，万余精兵被团团围困。身旁谋士提出两条路：其一，你以自身为饵吸引敌军主力，为大部队创造突围机会，但你极可能身死于此；其二，你率亲卫率先突围，留下步兵断后，抛弃他们，为自己保命。",
       "conditions": {},
       "choices": [
@@ -74,6 +75,7 @@
     {
       "id": "final_03",
       "title": "功臣末路",
+      "image": "images/events/final_03.webp",
       "description": "天下初定，新帝开始清除功高震主的老臣。你收到密报：你的名字就在那份黑名单上。",
       "conditions": {},
       "choices": [
@@ -120,6 +122,7 @@
     {
       "id": "final_05",
       "title": "故人重逢",
+      "image": "images/events/final_05.webp",
       "description": "多年未见的故人突然造访。他如今是敌对阵营的重臣，冒着生命危险来见你最后一面。他问你：\"这一切，值得吗？\"",
       "conditions": {},
       "choices": [
@@ -146,6 +149,7 @@
     {
       "id": "final_06",
       "title": "最终抉择",
+      "image": "images/events/final_06.webp",
       "description": "一切尘埃落定。你站在城楼上望着远方，回想这一路走来的种种。此刻，你终于可以做一个只为自己的选择。",
       "conditions": {},
       "choices": [
@@ -198,6 +202,7 @@
     {
       "id": "final_assassination",
       "title": "鸿门之宴",
+      "image": "images/events/final_assassination.webp",
       "description": "魏帝曹丕设宴邀你入宫赴饮。然而你的心腹送来密报：宴会上已暗伏刀斧手，这是一场鸿门宴。曹丕忌惮你的威望和兵权，决心在宴上除掉你。赴宴则可能身死，不赴则等同公然反叛。",
       "conditions": {},
       "choices": [
