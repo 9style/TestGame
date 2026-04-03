@@ -19,8 +19,16 @@ OUTPUT = Path(__file__).parent / "guide.md"
 
 
 def load_json(filename):
-    with open(DATA / filename, encoding="utf-8") as f:
-        return json.load(f)
+    path = DATA / filename
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"❌ 错误：找不到数据文件 {path}", file=sys.stderr)
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"❌ 错误：{filename} JSON 格式错误（第 {e.lineno} 行）：{e.msg}", file=sys.stderr)
+        sys.exit(1)
 
 
 # ── 辅助：将 conditions 字典转为可读字符串 ─────────────────────────────────────
@@ -64,7 +72,10 @@ def ending_difficulty(ending: dict) -> str:
         "betrayed":     "★★",
         "ordinary":     "★",
     }
-    return difficulty_map.get(ending["id"], "★★★")
+    eid = ending["id"]
+    if eid not in difficulty_map:
+        print(f"⚠️  警告：结局 '{eid}' 未配置难度星级，使用默认值 ★★★", file=sys.stderr)
+    return difficulty_map.get(eid, "★★★")
 
 
 # ── 第二章：武将详解 ──────────────────────────────────────────────────────────
@@ -241,6 +252,8 @@ def gen_chapter5(endings_data: dict) -> str:
         eid = e["id"]
         icon = e.get("icon", "📜")
         route_data = ENDING_ROUTES.get(eid, {})
+        if not route_data:
+            print(f"⚠️  警告：结局 '{eid}' 缺少路线数据，请在 ENDING_ROUTES 中补充。", file=sys.stderr)
         cond = conditions_to_str(e.get("conditions", {}))
 
         lines.append(f"## {icon} {e['name']}\n")
@@ -254,7 +267,7 @@ def gen_chapter5(endings_data: dict) -> str:
 
 # ── 附录：标记系统 ────────────────────────────────────────────────────────────
 
-def gen_appendix(event_files: list) -> str:
+def gen_appendix() -> str:
     known_flags = {
         "farmer_led_villagers": {
             "trigger": "农夫之子·少年期·选「召集村民带大家撤离」",
@@ -295,7 +308,6 @@ def main():
     characters = load_json("characters.json")
     endings_data = load_json("endings.json")
     crisis_events = load_json("events-crisis.json")
-    event_files = list(DATA.glob("events-*.json"))
 
     print("✍️  正在生成攻略内容...")
     sections = [
@@ -305,7 +317,7 @@ def main():
         gen_chapter3(crisis_events),
         gen_chapter4(endings_data),
         gen_chapter5(endings_data),
-        gen_appendix(event_files),
+        gen_appendix(),
     ]
 
     output = "\n\n".join(sections)
