@@ -1,5 +1,39 @@
 // ui.js — DOM rendering for all game screens, transitions, and animations
 
+// ── 图片加载辅助（带重试 + loading 占位）────────────────────────────────────────
+
+function loadImage(src, { alt = '', className = '', maxRetries = 2, fadeIn = true } = {}) {
+  const wrapper = document.createElement('div');
+  wrapper.className = `img-loading-wrapper ${className}`;
+  wrapper.innerHTML = '<div class="img-placeholder">加载中…</div>';
+
+  const img = document.createElement('img');
+  img.className = className;
+  img.alt = alt;
+  if (fadeIn) img.style.opacity = '0';
+
+  let retries = 0;
+
+  img.onload = () => {
+    wrapper.replaceWith(img);
+    if (fadeIn) {
+      requestAnimationFrame(() => { img.style.transition = 'opacity 0.5s'; img.style.opacity = '1'; });
+    }
+  };
+
+  img.onerror = () => {
+    if (retries < maxRetries) {
+      retries++;
+      setTimeout(() => { img.src = src + '?retry=' + retries; }, 1000 * retries);
+    } else {
+      wrapper.remove();
+    }
+  };
+
+  img.src = src;
+  return wrapper;
+}
+
 export class UI {
   constructor() {
     this.screens = {
@@ -108,21 +142,15 @@ export class UI {
     document.getElementById('event-desc').textContent = event.description;
 
     // Show event illustration (crisis or regular event image)
-    const existingIllustration = document.querySelector('.event-illustration');
+    const existingIllustration = document.querySelector('.event-illustration, .img-loading-wrapper');
     if (existingIllustration) existingIllustration.remove();
     const imgSrc = event.isCrisis && event.crisis_type
       ? `images/crisis/${event.crisis_type}.webp`
-      : event.image || null;
+      : event.image?.replace('.png', '.webp') || null;
     if (imgSrc) {
-      const img = document.createElement('img');
-      img.className = 'event-illustration';
-      img.src = imgSrc;
-      img.alt = event.title;
-      img.style.opacity = '0';
-      img.onload = () => { img.style.transition = 'opacity 0.5s'; img.style.opacity = '1'; };
-      img.onerror = () => img.remove();
+      const wrapper = loadImage(imgSrc, { alt: event.title, className: 'event-illustration' });
       const eventContent = document.querySelector('.event-content');
-      eventContent.insertBefore(img, document.getElementById('event-title'));
+      eventContent.insertBefore(wrapper, document.getElementById('event-title'));
     }
 
     const container = document.getElementById('choices-container');
@@ -252,14 +280,12 @@ export class UI {
     // Show ending illustration
     const existingImg = document.getElementById('ending-illustration');
     if (existingImg) existingImg.remove();
-    const img = document.createElement('img');
-    img.id = 'ending-illustration';
-    img.className = 'ending-illustration';
-    img.src = `images/endings/${ending.id}.webp`;
-    img.alt = ending.name;
-    img.onerror = () => img.remove();
+    const existingWrapper = document.querySelector('.ending-illustration.img-loading-wrapper, .img-loading-wrapper.ending-illustration');
+    if (existingWrapper) existingWrapper.remove();
+    const imgWrapper = loadImage(`images/endings/${ending.id}.webp`, { alt: ending.name, className: 'ending-illustration' });
+    imgWrapper.id = 'ending-illustration';
     const charEl = document.getElementById('ending-char');
-    charEl.parentNode.insertBefore(img, charEl.nextSibling);
+    charEl.parentNode.insertBefore(imgWrapper, charEl.nextSibling);
 
     document.getElementById('ending-epitaph').textContent = ending.epitaph || '';
     document.getElementById('ending-story').textContent = ending.story;
