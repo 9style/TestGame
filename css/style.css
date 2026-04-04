@@ -73,6 +73,27 @@ html, body {
   color: var(--text-muted);
   margin-bottom: 40px;
 }
+/* === Nickname Area === */
+.nickname-area {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; margin-bottom: 20px; width: 200px;
+}
+.nickname-input {
+  width: 100%; padding: 10px 14px; border-radius: 6px;
+  border: 1px solid var(--text-dim); background: var(--bg-card);
+  color: var(--text-primary); font-family: inherit; font-size: 14px;
+  text-align: center; outline: none; transition: border-color 0.2s;
+}
+.nickname-input:focus { border-color: var(--gold); }
+.nickname-input::placeholder { color: var(--text-dim); }
+.nickname-btn { width: 100%; }
+.welcome-area {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; margin-bottom: 20px;
+}
+.welcome-text { font-size: 14px; color: var(--gold); }
+.nickname-change-btn { font-size: 11px; padding: 6px 16px; }
+
 .title-buttons {
   display: flex;
   flex-direction: column;
@@ -225,7 +246,7 @@ html, body {
 }
 .choice-btn:active { border-color: var(--gold); }
 .choice-text { font-weight: bold; margin-bottom: 4px; }
-.choice-effects { font-size: 11px; color: var(--text-muted); }
+.choice-danger-tag { color: var(--red); font-size: 12px; font-weight: bold; }
 
 /* === Result Screen === */
 .result-content {
@@ -255,6 +276,14 @@ html, body {
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
+}
+.effect-badge.badge-reveal {
+  opacity: 0;
+  animation: badge-reveal 0.4s ease forwards;
+}
+@keyframes badge-reveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .effect-badge.positive { background: #1a3a1a; border: 1px solid var(--green); color: var(--green); }
 .effect-badge.negative { background: #3a1a1a; border: 1px solid var(--red); color: var(--red); }
@@ -408,9 +437,6 @@ html, body {
 .choice-btn.choice-danger {
   border-color: var(--red);
   background: #2a0f0f;
-}
-.choice-btn.choice-danger .choice-effects {
-  color: var(--red);
 }
 
 /* === Death Result === */
