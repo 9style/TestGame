@@ -68,16 +68,44 @@ export class UI {
 
   // --- Title Screen ---
 
-  renderTitle(unlockedCount) {
+  renderTitle(unlockedCount, playerName) {
     document.getElementById('gallery-count').textContent = unlockedCount;
+    const nicknameArea = document.getElementById('nickname-area');
+    const welcomeArea = document.getElementById('welcome-area');
+    const nicknameInput = document.getElementById('nickname-input');
+    const btnStart = document.getElementById('btn-start');
 
-    document.getElementById('btn-start').onclick = () => {
-      this.callbacks.onStart?.();
-    };
-    document.getElementById('btn-gallery').onclick = () => {
-      this.callbacks.onShowGallery?.();
-    };
+    if (playerName) {
+      nicknameArea.style.display = 'none';
+      welcomeArea.style.display = '';
+      document.getElementById('player-name-display').textContent = playerName;
+      btnStart.disabled = false;
+      btnStart.style.opacity = '1';
+      document.getElementById('btn-change-name').onclick = () => {
+        nicknameArea.style.display = '';
+        welcomeArea.style.display = 'none';
+        nicknameInput.value = playerName;
+        btnStart.disabled = true;
+        btnStart.style.opacity = '0.4';
+        nicknameInput.focus();
+      };
+    } else {
+      nicknameArea.style.display = '';
+      welcomeArea.style.display = 'none';
+      nicknameInput.value = '';
+      btnStart.disabled = true;
+      btnStart.style.opacity = '0.4';
+    }
 
+    document.getElementById('btn-set-name').onclick = () => {
+      const name = nicknameInput.value.trim();
+      if (name.length >= 1 && name.length <= 8) this.callbacks.onSetName?.(name);
+    };
+    nicknameInput.onkeydown = (e) => {
+      if (e.key === 'Enter') document.getElementById('btn-set-name').click();
+    };
+    btnStart.onclick = () => { this.callbacks.onStart?.(); };
+    document.getElementById('btn-gallery').onclick = () => { this.callbacks.onShowGallery?.(); };
     this.showScreen('title');
   }
 
@@ -163,26 +191,8 @@ export class UI {
       const isDanger = choice.crisis_trigger || choice.crisis_check;
       btn.className = `choice-btn${isDanger ? ' choice-danger' : ''}`;
 
-      // Build effects text
-      let effectsText = '';
-      if (choice.effects) {
-        effectsText = Object.entries(choice.effects)
-          .filter(([, v]) => v !== 0)
-          .map(([k, v]) => `${k}${v > 0 ? '+' : ''}${v}`)
-          .join(' · ');
-      }
-
-      // For crisis check choices, show the risk
-      if (choice.crisis_check) {
-        const checkDesc = Object.entries(choice.crisis_check)
-          .map(([k, v]) => `${k}≥${v.min}`)
-          .join('且');
-        effectsText = `⚠️ 需要判定：${checkDesc}`;
-      }
-
       btn.innerHTML = `
-        <div class="choice-text">${choice.text}</div>
-        <div class="choice-effects">${effectsText || '—'}</div>
+        <div class="choice-text">${choice.text}${isDanger ? ' <span class="choice-danger-tag">⚠️ 危险</span>' : ''}</div>
       `;
       btn.onclick = () => {
         this.callbacks.onChoice?.(index);
@@ -214,22 +224,30 @@ export class UI {
     const container = document.getElementById('result-effects');
     container.innerHTML = '';
 
+    let badgeIndex = 0;
+
     if (isDeath) {
       const badge = document.createElement('span');
-      badge.className = 'effect-badge death';
+      badge.className = 'effect-badge death badge-reveal';
       badge.textContent = '💀 命陨';
+      badge.style.animationDelay = `${300 + badgeIndex * 200}ms`;
+      badgeIndex++;
       container.appendChild(badge);
     } else if (crisisResolved) {
       const badge = document.createElement('span');
-      badge.className = 'effect-badge positive';
+      badge.className = 'effect-badge positive badge-reveal';
       badge.textContent = '✅ 危机化解';
+      badge.style.animationDelay = `${300 + badgeIndex * 200}ms`;
+      badgeIndex++;
       container.appendChild(badge);
     }
 
     for (const [attr, delta] of Object.entries(effects)) {
       const badge = document.createElement('span');
-      badge.className = `effect-badge ${delta > 0 ? 'positive' : 'negative'}`;
+      badge.className = `effect-badge ${delta > 0 ? 'positive' : 'negative'} badge-reveal`;
       badge.textContent = `${attr} ${delta > 0 ? '+' : ''}${delta}`;
+      badge.style.animationDelay = `${300 + badgeIndex * 200}ms`;
+      badgeIndex++;
       container.appendChild(badge);
     }
 
