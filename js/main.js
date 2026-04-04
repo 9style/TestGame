@@ -15,7 +15,8 @@ async function init() {
     lastScreen = 'title';
     game.clearSave();
     const unlocked = game.getUnlockedEndings().length;
-    ui.renderTitle(unlocked);
+    const playerName = game.getPlayerName();
+    ui.renderTitle(unlocked, playerName);
   }
 
   function showCharacterSelect() {
@@ -76,6 +77,12 @@ async function init() {
 
   // --- Wire callbacks ---
 
+  ui.on('onSetName', (name) => {
+    game.setPlayerName(name);
+    const unlocked = game.getUnlockedEndings().length;
+    ui.renderTitle(unlocked, name);
+  });
+
   ui.on('onStart', () => {
     ui.renderIntro(() => {
       showCharacterSelect();
@@ -128,8 +135,11 @@ async function init() {
 
   // --- Initialize ---
 
+  // Load player name first
+  game.loadPlayerName();
+
   // Check for saved game
-  if (game.load()) {
+  if (game.getPlayerName() && game.load()) {
     // Resume saved game
     showCurrentEvent();
   } else {
