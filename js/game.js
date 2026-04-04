@@ -1,8 +1,5 @@
 // game.js — Game state management, event selection, attribute logic, ending determination
 
-const SAVE_KEY = 'sgwjl_save';
-const ENDINGS_KEY = 'sgwjl_endings';
-
 const PHASE_NAMES = ['youth', 'rise', 'war', 'final'];
 
 export class Game {
@@ -13,6 +10,62 @@ export class Game {
     this.characterEvents = data.characterEvents || {}; // keyed by characterId then phase
     this.crisisEvents = data.crisisEvents || []; // array of crisis event objects
     this.state = null;
+    this.playerName = null;
+  }
+
+  // --- Player Name ---
+
+  _saveKey() {
+    return this.playerName ? `sgwjl_save_${this.playerName}` : 'sgwjl_save';
+  }
+
+  _endingsKey() {
+    return this.playerName ? `sgwjl_endings_${this.playerName}` : 'sgwjl_endings';
+  }
+
+  setPlayerName(name) {
+    this.playerName = name;
+    localStorage.setItem('sgwjl_player', name);
+    this._migrateOldData();
+  }
+
+  getPlayerName() {
+    return this.playerName;
+  }
+
+  loadPlayerName() {
+    const saved = localStorage.getItem('sgwjl_player');
+    if (saved) {
+      this.playerName = saved;
+      return saved;
+    }
+    return null;
+  }
+
+  _migrateOldData() {
+    // 迁移旧的 sgwjl_endings 到当前昵称
+    const oldEndings = localStorage.getItem('sgwjl_endings');
+    if (oldEndings) {
+      const newKey = this._endingsKey();
+      const existing = localStorage.getItem(newKey);
+      if (!existing) {
+        localStorage.setItem(newKey, oldEndings);
+      } else {
+        try {
+          const merged = [...new Set([...JSON.parse(existing), ...JSON.parse(oldEndings)])];
+          localStorage.setItem(newKey, JSON.stringify(merged));
+        } catch {}
+      }
+      localStorage.removeItem('sgwjl_endings');
+    }
+    // 迁移旧的 sgwjl_save 到当前昵称
+    const oldSave = localStorage.getItem('sgwjl_save');
+    if (oldSave) {
+      if (!localStorage.getItem(this._saveKey())) {
+        localStorage.setItem(this._saveKey(), oldSave);
+      }
+      localStorage.removeItem('sgwjl_save');
+    }
   }
 
   // --- Character Selection ---
@@ -24,6 +77,7 @@ export class Game {
     this.state = {
       characterId: char.id,
       characterName: char.name,
+      playerName: this.playerName,
       phaseIndex: 0,
       eventIndex: 0,
       attrs: { ...char.attrs },
@@ -316,11 +370,11 @@ export class Game {
 
   save() {
     if (!this.state) return;
-    localStorage.setItem(SAVE_KEY, JSON.stringify(this.state));
+    localStorage.setItem(this._saveKey(), JSON.stringify(this.state));
   }
 
   load() {
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw = localStorage.getItem(this._saveKey());
     if (!raw) return false;
     try {
       this.state = JSON.parse(raw);
@@ -342,14 +396,14 @@ export class Game {
   }
 
   clearSave() {
-    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem(this._saveKey());
     this.state = null;
   }
 
   // --- Endings Gallery ---
 
   getUnlockedEndings() {
-    const raw = localStorage.getItem(ENDINGS_KEY);
+    const raw = localStorage.getItem(this._endingsKey());
     if (!raw) return [];
     try {
       return JSON.parse(raw);
@@ -490,7 +544,7 @@ export class Game {
     const unlocked = this.getUnlockedEndings();
     if (!unlocked.includes(endingId)) {
       unlocked.push(endingId);
-      localStorage.setItem(ENDINGS_KEY, JSON.stringify(unlocked));
+      localStorage.setItem(this._endingsKey(), JSON.stringify(unlocked));
     }
   }
 
