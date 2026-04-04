@@ -13,6 +13,14 @@
         <p class="title-subtitle">魂穿乱世</p>
         <h1 class="title-main">重生之我在三国争霸</h1>
         <p class="title-tagline">—— 重生三国，争霸天下 ——</p>
+        <div id="nickname-area" class="nickname-area">
+          <input type="text" id="nickname-input" class="nickname-input" placeholder="请输入你的名号" maxlength="8">
+          <button id="btn-set-name" class="btn btn-primary nickname-btn">确认名号</button>
+        </div>
+        <div id="welcome-area" class="welcome-area" style="display:none">
+          <p class="welcome-text">欢迎，<span id="player-name-display"></span></p>
+          <button id="btn-change-name" class="btn btn-secondary nickname-change-btn">更换名号</button>
+        </div>
         <div class="title-buttons">
           <button id="btn-start" class="btn btn-primary">开始征途</button>
           <button id="btn-gallery" class="btn btn-secondary">结局图鉴 (<span id="gallery-count">0</span>/20)</button>
