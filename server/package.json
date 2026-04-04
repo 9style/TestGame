@@ -1,0 +1,13 @@
+{
+  "name": "sgwjl-server",
+  "version": "1.0.0",
+  "description": "三国武将录后端统计服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.0.0"
+  }
+}
