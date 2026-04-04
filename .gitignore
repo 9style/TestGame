@@ -1,3 +1,7 @@
 # 攻略PDF（自动生成物）
 guide/guide.pdf
 guide/guide.md
+
+# Server
+server/node_modules/
+server/data.db
