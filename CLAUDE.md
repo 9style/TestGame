@@ -4,55 +4,63 @@
 
 ## 项目概述
 
-**三国武将录** —— 一款基于浏览器的三国文字冒险游戏。玩家选择一位历史武将，在人生的 4 个阶段中做出抉择，最终根据属性值达成 13 种正常结局之一，或在途中因危机事件夭折（4 种死亡结局）。共 17 种结局。
+**三国武将录** —— 一款基于浏览器的三国文字冒险游戏。玩家从 6 位角色中选择出身，在人生的 4 个阶段（少年期/崛起期/争霸期/终局期）中做出抉择，最终根据累计属性值达成 20 种结局之一：4 种死亡结局（游戏中途因危机触发）和 16 种正常结局（游戏结束时按属性顺序匹配，末项为兜底）。
 
 ## 运行游戏
 
 本项目是使用 ES 模块和 `fetch()` 的静态站点，**不能直接通过 `file://` 打开**，必须通过 HTTP 服务运行：
 
 ```bash
-# Python（最简单）
 python -m http.server 8080
-
-# Node.js
+# 或
 npx serve .
 ```
 
-然后访问 `http://localhost:8080`。
+没有构建步骤、没有 package.json、没有测试套件、没有 linter。
 
-项目没有构建步骤、没有 package.json、也没有测试套件。
+已部署至 GitHub Pages（存在 `.nojekyll` 文件）。
 
 ## 架构
 
-### 模块职责
+严格 MVC 分离，共 4 个 JS 模块 —— **`main.js` 中无任何游戏逻辑**，**`ui.js` 中无任何游戏状态**：
 
-- **`js/main.js`** — 仅作为入口。初始化 `Game` 和 `UI`，通过 `ui.on(event, handler)` 连接两者的回调，并管理页面跳转。此处不含任何游戏逻辑。
-- **`js/game.js`** — 全部游戏逻辑：状态管理、事件筛选、属性计算、结局判定、localStorage 持久化。`Game` 类是唯一的数据来源。
-- **`js/ui.js`** — 纯 DOM 渲染。除屏幕引用和回调外无状态，从不直接读取游戏状态，所有数据均由 `main.js` 以参数形式传入。
-- **`js/data-loader.js`** — 并行拉取所有 JSON 文件，组装成 `{ characters, endings, phases }` 对象传给 `Game`。
+- **`js/main.js`** — 入口文件。创建 `Game` + `UI` 实例，通过 `ui.on(event, handler)` 连接回调，管理页面跳转。不含逻辑。
+- **`js/game.js`** — 全部游戏逻辑：状态机、事件筛选（`_pickPhaseEvents`、`_checkConditions`）、属性计算（限制在 [0,100]）、危机检测、结局判定、localStorage 持久化。唯一的数据来源。
+- **`js/ui.js`** — 纯 DOM 渲染。除元素引用和回调外无状态，从不直接读取游戏状态——所有数据由 `main.js` 以参数形式传入。
+- **`js/data-loader.js`** — 并行 `fetch()` 拉取 8 个 JSON 文件，组装为 `{ characters, endings, phases[], characterEvents{}, crisisEvents[] }`。
 
-### 数据文件（`data/`）
+### 数据流
 
-| 文件 | 内容 |
-|------|------|
-| `characters.json` | 6 位可选武将，含可见属性（`武/智/德/魅`）和隐藏属性（`命运/忠义`）|
-| `endings.json` | 17 种结局（4 种死亡 + 13 种正常），死亡结局带 `isDeath: true` 标记，正常结局按顺序匹配，最后一项（`ordinary`）为兜底 |
-| `events-youth.json` | 第 1 阶段事件池（少年期，每局抽取 5 个）|
-| `events-rise.json` | 第 2 阶段事件池（崛起期，每局抽取 6 个）|
-| `events-war.json` | 第 3 阶段事件池（争霸期，每局抽取 6 个）|
-| `events-final.json` | 第 4 阶段事件池（终局期，每局抽取 3 个）|
-| `events-character.json` | 角色专属事件（6 角色 × 4 阶段 = 24 个），每阶段作为第一个必选事件插入 |
-| `events-crisis.json` | 4 种危机事件（病殁/暗杀/战死/处斩），阶段结束时根据属性阈值触发 |
+```
+data-loader → Game(data) → main.js 连接回调 → UI 渲染
+                ↕
+           localStorage
+```
 
-### 游戏状态与持久化
+`main.js` 在 `ui.on()` 回调中调用 `game.method()`，再将结果传给 `ui.renderX()` 方法。UI 永远不与 Game 直接通信。
 
-- **当前游戏状态**（`state`）在每次选择后存入 `localStorage`，键名为 `sgwjl_save`
-- **已解锁结局**累计存入 `localStorage`，键名为 `sgwjl_endings`
-- 启动时 `game.load()` 恢复存档；`game.clearSave()` 重置存档
+## 游戏数据（`data/`）
 
-### 事件 / 选项数据结构
+| 文件 | 数量 | 每局使用 |
+|------|------|----------|
+| `characters.json` | 6 种出身（农夫/书生/士卒/游侠/商贾/匠人） | 选 1 |
+| `endings.json` | 20 种结局（4 死亡 + 16 正常，顺序匹配） | 达成 1 |
+| `events-youth.json` | 15 个事件 | 抽取 5 |
+| `events-rise.json` | 15 个事件 | 抽取 6 |
+| `events-war.json` | 18 个事件 | 抽取 6 |
+| `events-final.json` | 13 个事件 | 抽取 3 |
+| `events-character.json` | 24 个事件（6 角色 × 4 阶段） | 4 个（每阶段 1 个，始终排首位） |
+| `events-crisis.json` | 4 种危机类型 | 0–3 个（低属性触发） |
 
-各阶段 JSON 文件中每个事件的格式：
+**每局总事件数：** 24（4 个角色专属 + 20 个随机池抽取）。
+
+### 属性系统
+
+- **可见属性：** 武、智、德、魅
+- **隐藏属性：** 命运、忠义、魏/蜀/吴（阵营亲和度）
+- 所有属性值限制在 [0, 100] 范围内
+
+### 事件/选项数据结构
 
 ```json
 {
@@ -81,17 +89,45 @@ npx serve .
 }
 ```
 
-- 事件上的 `conditions` 控制该事件是否进入 `_pickPhaseEvents()` 的候选池
-- 选项上的 `hidden_conditions` 决定该选项是否对玩家可见
-- `no_extreme` 是特殊条件：若任意可见属性 <30 或 >85 则不满足
-- `requires_flags` / `excludes_flags`：标记系统，选项 `set_flags` 设置标记，后续事件/选项可据此显示或隐藏
-- `crisis_trigger` + `crisis_check`：即死选项，属性不满足 `crisis_check` 则触发 `death_ending` 指定的死亡结局
-- 所有属性值限制在 [0, 100] 范围内
+关键机制：
+- 事件 `conditions` → 控制该事件是否进入 `_pickPhaseEvents()` 候选池
+- 选项 `hidden_conditions` → 控制该选项是否对玩家可见
+- `no_extreme` → 若任意可见属性 <30 或 >85 则不满足
+- `requires_flags` / `excludes_flags` → 基于标记的分支系统
+- `crisis_trigger` + `crisis_check` → 即死赌博；属性不满足则触发 `death_ending`
 
 ### 危机系统
 
-阶段结束时 `game.checkCrisis()` 检测属性阈值（少年期免疫），触发后进入危机事件。危机事件有"安全退出"选项（有代价但必定存活）和"属性判定"选项（失败则死亡）。`saved_doctor` 标记会为病殁危机添加额外的高成功率选项。
+`game.checkCrisis()` 在每个阶段结束后执行（少年期免疫）。触发阈值：
+
+| 危机 | 触发条件 | 生效阶段 |
+|------|----------|----------|
+| 病殁 | 命运 < 15 | 1–3 |
+| 暗杀 | 德 < 12 且 魅 < 20 | 1–3 |
+| 战死 | 武 < 12 | 仅 2–3 |
+| 处斩 | 忠义 < 12 且 德 < 20 | 1–3 |
+
+危机事件提供"安全退出"选项（存活但有代价）和"赌博"选项（属性判定，失败则死亡）。`saved_doctor` 标记会为病殁危机添加一个高成功率选项。
 
 ### 结局判定
 
-`game.checkEnding()` 先检查 `state.deathEnding`（中途夭折），若有则直接返回对应死亡结局。否则按顺序遍历 `this.endings`（跳过 `isDeath` 结局），返回第一个 `conditions` 与最终 `attrs` + `hidden` 值匹配的结局。最后一项结局（`ordinary`）条件为空，始终命中。
+`game.checkEnding()`：优先返回死亡结局（若已设置）→ 按顺序遍历正常结局（首个匹配即返回）→ `ordinary` 兜底。阵营结局（wei_minister/shu_guardian/wu_admiral）要求对应阵营属性 ≥ 80。
+
+### 持久化
+
+- `localStorage['sgwjl_save']` — 当前游戏状态 JSON（每次选择后保存）
+- `localStorage['sgwjl_endings']` — 已解锁结局 ID 数组（累计）
+
+## 工具链
+
+### 图片生成（`generate_images.py`）
+
+通过火山引擎 ARK API 批量生成约 105 张游戏插画（WebP 格式），统一中国水墨画风格。输出至 `images/` 各子目录。读取环境变量 `ARK_API_KEY`。
+
+### 攻略生成（`guide/`）
+
+`guide/generate_guide.py` 读取游戏数据 JSON + `guide/templates/manual_content.py` 中的手写内容，输出 `guide/guide.md`。通过 `guide/build_pdf.bat` 转换为 PDF（需要 Pandoc + XeLaTeX）。
+
+## 视觉设计
+
+深色中国水墨画风格主题。移动端优先布局（最大宽度 480px）。所有游戏美术均为 WebP 格式。`index.html` 中定义 8 个页面，通过 CSS 淡入淡出过渡切换。
