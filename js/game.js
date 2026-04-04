@@ -344,6 +344,7 @@ export class Game {
       const deathEnd = this.endings.find(e => e.id === this.state.deathEnding);
       if (deathEnd) {
         this._unlockEnding(deathEnd.id);
+        this._reportRecord(deathEnd);
         return deathEnd;
       }
     }
@@ -356,6 +357,7 @@ export class Game {
       if (ending.isDeath) continue;
       if (this._matchesEnding(ending, attrs, hidden)) {
         this._unlockEnding(ending.id);
+        this._reportRecord(ending);
         return ending;
       }
     }
@@ -363,6 +365,7 @@ export class Game {
     // Default ending (last in the array, "ordinary")
     const defaultEnding = this.endings[this.endings.length - 1];
     this._unlockEnding(defaultEnding.id);
+    this._reportRecord(defaultEnding);
     return defaultEnding;
   }
 
@@ -538,6 +541,20 @@ export class Game {
       if (range.max !== undefined && value > range.max) return false;
     }
     return true;
+  }
+
+  _reportRecord(ending) {
+    try {
+      fetch('/api/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerName: this.state.playerName || 'anonymous',
+          characterId: this.state.characterId,
+          endingId: ending.id,
+        }),
+      }).catch(() => {});
+    } catch {}
   }
 
   _unlockEnding(endingId) {
