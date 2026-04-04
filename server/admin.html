@@ -199,7 +199,7 @@
       <h2>各结局达成次数</h2>
       <table>
         <thead>
-          <tr><th>结局 ID</th><th>次数</th></tr>
+          <tr><th>结局</th><th>次数</th></tr>
         </thead>
         <tbody id="ending-table-body"></tbody>
       </table>
@@ -209,7 +209,7 @@
       <h2>各角色选择次数</h2>
       <table>
         <thead>
-          <tr><th>角色 ID</th><th>次数</th></tr>
+          <tr><th>角色</th><th>次数</th></tr>
         </thead>
         <tbody id="character-table-body"></tbody>
       </table>
@@ -228,6 +228,29 @@
 
   <script>
     let currentPassword = '';
+
+    // 角色 ID → 中文名映射
+    const characterNames = {
+      farmer: '农夫之子', scholar: '寒门书生', soldier: '行伍士卒',
+      wanderer: '江湖游侠', merchant: '商贾之子', craftsman: '匠人学徒'
+    };
+
+    // 结局 ID → 中文名映射
+    const endingNames = {
+      death_illness: '病殁沙场', death_assassinated: '遇刺身亡',
+      death_battle: '马革裹尸', death_executed: '身首异处',
+      unify: '一统天下', wei_minister: '魏国重臣',
+      shu_guardian: '蜀汉柱石', wu_admiral: '东吴都督',
+      benevolent: '仁主中兴', strategist: '幕后军师',
+      invincible: '天下无双', martyr: '以身殉道',
+      loyal: '忠臣良将', chancellor: '权臣专政',
+      warlord: '乱世枭雄', hermit: '归隐山林',
+      fallen: '战死沙场', bandit: '落草为寇',
+      betrayed: '众叛亲离', ordinary: '平凡一生'
+    };
+
+    function charName(id) { return characterNames[id] || id; }
+    function endName(id) { return endingNames[id] || id; }
 
     const loginScreen = document.getElementById('login-screen');
     const statsScreen = document.getElementById('stats-screen');
@@ -249,17 +272,17 @@
 
       const endingBody = document.getElementById('ending-table-body');
       endingBody.innerHTML = data.endingCounts.map(function(row) {
-        return '<tr><td>' + escapeHtml(row.ending_id) + '</td><td>' + row.count + '</td></tr>';
+        return '<tr><td>' + escapeHtml(endName(row.ending_id)) + '</td><td>' + row.count + '</td></tr>';
       }).join('');
 
       const charBody = document.getElementById('character-table-body');
       charBody.innerHTML = data.characterCounts.map(function(row) {
-        return '<tr><td>' + escapeHtml(row.character_id) + '</td><td>' + row.count + '</td></tr>';
+        return '<tr><td>' + escapeHtml(charName(row.character_id)) + '</td><td>' + row.count + '</td></tr>';
       }).join('');
 
       const recentBody = document.getElementById('recent-table-body');
       recentBody.innerHTML = data.recentRecords.map(function(row) {
-        return '<tr><td>' + escapeHtml(row.player_name) + '</td><td>' + escapeHtml(row.character_id) + '</td><td>' + escapeHtml(row.ending_id) + '</td><td>' + escapeHtml(row.created_at) + '</td></tr>';
+        return '<tr><td>' + escapeHtml(row.player_name) + '</td><td>' + escapeHtml(charName(row.character_id)) + '</td><td>' + escapeHtml(endName(row.ending_id)) + '</td><td>' + escapeHtml(row.created_at) + '</td></tr>';
       }).join('');
     }
 
