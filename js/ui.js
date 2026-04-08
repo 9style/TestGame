@@ -295,11 +295,8 @@ export class UI {
     document.getElementById('ending-name').textContent = ending.name;
     document.getElementById('ending-char').textContent = `${characterName} · 已解锁`;
 
-    // Show ending illustration
-    const existingImg = document.getElementById('ending-illustration');
-    if (existingImg) existingImg.remove();
-    const existingWrapper = document.querySelector('.ending-illustration.img-loading-wrapper, .img-loading-wrapper.ending-illustration');
-    if (existingWrapper) existingWrapper.remove();
+    // Show ending illustration — remove all previous images/wrappers
+    endingContent.querySelectorAll('#ending-illustration, img.ending-illustration, .img-loading-wrapper.ending-illustration').forEach(el => el.remove());
     const imgWrapper = loadImage(`images/endings/${ending.id}.webp`, { alt: ending.name, className: 'ending-illustration' });
     imgWrapper.id = 'ending-illustration';
     const charEl = document.getElementById('ending-char');
