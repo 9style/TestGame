@@ -289,8 +289,15 @@ export class UI {
       endingContent.classList.remove('death-ending');
     }
 
+    // Add tier styling
+    endingContent.classList.remove('tier-legendary', 'tier-elite', 'tier-normal');
+    if (ending.tier) {
+      endingContent.classList.add(`tier-${ending.tier}`);
+    }
+
     const labelEl = document.querySelector('.ending-label');
-    labelEl.textContent = ending.isDeath ? '—— 夭折 ——' : '—— 结局 ——';
+    const tierLabels = { legendary: '—— 传奇结局 ——', elite: '—— 精英结局 ——' };
+    labelEl.textContent = ending.isDeath ? '—— 夭折 ——' : (tierLabels[ending.tier] || '—— 结局 ——');
 
     document.getElementById('ending-name').textContent = ending.name;
     document.getElementById('ending-char').textContent = `${characterName} · 已解锁`;
@@ -342,7 +349,8 @@ export class UI {
       const card = document.createElement('div');
       const deathClass = ending.isDeath ? ' gallery-death' : '';
       const factionClass = ['wei_minister', 'shu_guardian', 'wu_admiral'].includes(ending.id) ? ' gallery-faction' : '';
-      card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}`;
+      const tierClass = ending.tier ? ` gallery-tier-${ending.tier}` : '';
+      card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}${tierClass}`;
 
       // 只为已解锁的结局加载图片，未解锁的显示占位符
       if (ending.unlocked) {
@@ -361,6 +369,17 @@ export class UI {
       nameEl.className = 'gallery-card-name';
       nameEl.textContent = ending.unlocked ? ending.name : '???';
       card.appendChild(nameEl);
+
+      // Add tier badge for unlocked non-death endings
+      if (ending.unlocked && ending.tier && !ending.isDeath) {
+        const tierNames = { legendary: '传奇', elite: '精英' };
+        if (tierNames[ending.tier]) {
+          const badge = document.createElement('span');
+          badge.className = `gallery-tier-badge tier-badge-${ending.tier}`;
+          badge.textContent = tierNames[ending.tier];
+          card.appendChild(badge);
+        }
+      }
 
       const descEl = document.createElement('div');
       descEl.className = 'gallery-card-desc';

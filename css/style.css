@@ -475,6 +475,18 @@ html, body {
   background: rgba(231, 76, 60, 0.06);
 }
 
+/* === Ending Tier Styles === */
+.ending-content.tier-legendary .ending-label {
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(196, 162, 78, 0.5);
+}
+.ending-content.tier-legendary .ending-name {
+  text-shadow: 0 0 12px rgba(196, 162, 78, 0.4);
+}
+.ending-content.tier-elite .ending-label {
+  color: #5b9bd5;
+}
+
 /* === Gallery Death Cards === */
 .gallery-card.gallery-death {
   border-color: #5a2020;
@@ -489,6 +501,39 @@ html, body {
 }
 .gallery-card.gallery-faction .gallery-card-name {
   color: #5b9bd5;
+}
+
+/* === Gallery Tier Styles === */
+.gallery-card.gallery-tier-legendary {
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(196, 162, 78, 0.2);
+}
+.gallery-card.gallery-tier-legendary .gallery-card-name {
+  color: var(--gold);
+}
+.gallery-card.gallery-tier-elite {
+  border-color: #5b9bd5;
+}
+.gallery-card.gallery-tier-elite .gallery-card-name {
+  color: #5b9bd5;
+}
+.gallery-tier-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.tier-badge-legendary {
+  color: var(--gold);
+  background: rgba(196, 162, 78, 0.15);
+  border: 1px solid var(--gold-dark);
+}
+.tier-badge-elite {
+  color: #5b9bd5;
+  background: rgba(91, 155, 213, 0.12);
+  border: 1px solid rgba(91, 155, 213, 0.3);
 }
 
 /* === Illustrations === */
