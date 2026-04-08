@@ -282,8 +282,15 @@
 
       const recentBody = document.getElementById('recent-table-body');
       recentBody.innerHTML = data.recentRecords.map(function(row) {
-        return '<tr><td>' + escapeHtml(row.player_name) + '</td><td>' + escapeHtml(charName(row.character_id)) + '</td><td>' + escapeHtml(endName(row.ending_id)) + '</td><td>' + escapeHtml(row.created_at) + '</td></tr>';
+        return '<tr><td>' + escapeHtml(row.player_name) + '</td><td>' + escapeHtml(charName(row.character_id)) + '</td><td>' + escapeHtml(endName(row.ending_id)) + '</td><td>' + formatTime(row.created_at) + '</td></tr>';
       }).join('');
+    }
+
+    function formatTime(utcStr) {
+      if (!utcStr) return '';
+      // SQLite datetime('now') returns UTC string like "2026-04-08 12:34:56"
+      const date = new Date(utcStr + 'Z');
+      return date.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
     }
 
     function escapeHtml(str) {
