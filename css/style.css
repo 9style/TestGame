@@ -94,6 +94,13 @@ html, body {
 .welcome-text { font-size: 14px; color: var(--gold); }
 .nickname-change-btn { font-size: 11px; padding: 6px 16px; }
 
+.version-display {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 20px;
+  letter-spacing: 1px;
+}
+
 .title-buttons {
   display: flex;
   flex-direction: column;
@@ -534,4 +541,28 @@ html, body {
 }
 .gallery-card.locked .gallery-card-thumb {
   filter: brightness(0.15);
+}
+.gallery-card .img-loading-wrapper {
+  height: 80px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.gallery-card .img-loading-wrapper .img-placeholder {
+  height: 80px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.gallery-card-placeholder {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background: var(--card-bg, #2a2a2a);
+  border: 1px solid var(--border, #444);
+  color: #555;
+  font-size: 28px;
+  font-weight: bold;
 }

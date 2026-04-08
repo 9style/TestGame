@@ -9,6 +9,11 @@ async function init() {
   const game = new Game(data);
   const ui = new UI();
 
+  fetch('version.json').then(r => r.json()).then(v => {
+    const el = document.getElementById('version-display');
+    if (el) el.textContent = `v${v.version} build ${v.build}`;
+  }).catch(() => {});
+
   let lastScreen = 'title';
 
   function showTitle() {

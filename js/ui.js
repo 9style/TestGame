@@ -346,11 +346,30 @@ export class UI {
       const deathClass = ending.isDeath ? ' gallery-death' : '';
       const factionClass = ['wei_minister', 'shu_guardian', 'wu_admiral'].includes(ending.id) ? ' gallery-faction' : '';
       card.className = `gallery-card${ending.unlocked ? '' : ' locked'}${deathClass}${factionClass}`;
-      card.innerHTML = `
-        <img class="gallery-card-thumb" src="images/endings/${ending.id}.webp" alt="${ending.unlocked ? ending.name : '???'}" onerror="this.style.display='none'">
-        <div class="gallery-card-name">${ending.unlocked ? ending.name : '???'}</div>
-        <div class="gallery-card-desc">${ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁'}</div>
-      `;
+
+      // 只为已解锁的结局加载图片，未解锁的显示占位符
+      if (ending.unlocked) {
+        const thumb = loadImage(`images/endings/${ending.id}.webp`, {
+          alt: ending.name, className: 'gallery-card-thumb', maxRetries: 1
+        });
+        card.appendChild(thumb);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'gallery-card-thumb gallery-card-placeholder';
+        placeholder.textContent = '?';
+        card.appendChild(placeholder);
+      }
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'gallery-card-name';
+      nameEl.textContent = ending.unlocked ? ending.name : '???';
+      card.appendChild(nameEl);
+
+      const descEl = document.createElement('div');
+      descEl.className = 'gallery-card-desc';
+      descEl.textContent = ending.unlocked ? ending.story.slice(0, 40) + '……' : '尚未解锁';
+      card.appendChild(descEl);
+
       grid.appendChild(card);
     }
 
