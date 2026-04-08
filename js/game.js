@@ -476,14 +476,43 @@ export class Game {
     const eligible = phase.events.filter(e => this._checkConditions(e.conditions));
     const shuffled = this._shuffle(eligible);
 
-    if (charEvent) {
-      // Character event first, then (pickCount - 1) random events
-      const randomEvents = shuffled.slice(0, phase.pickCount - 1);
-      return [charEvent, ...randomEvents];
-    }
+    const pickCount = charEvent ? phase.pickCount - 1 : phase.pickCount;
+    const picked = shuffled.slice(0, pickCount);
 
-    // Fallback: no character event, use original pickCount
-    return shuffled.slice(0, phase.pickCount);
+    // Sort by historical year: events with year>0 are ordered chronologically,
+    // events with year=0 (generic) are distributed in the gaps between them
+    const sorted = this._sortByYear(picked);
+
+    if (charEvent) {
+      return [charEvent, ...sorted];
+    }
+    return sorted;
+  }
+
+  _sortByYear(events) {
+    const withYear = events.filter(e => e.year > 0).sort((a, b) => a.year - b.year);
+    const noYear = this._shuffle(events.filter(e => !e.year));
+
+    if (withYear.length === 0) return noYear;
+    if (noYear.length === 0) return withYear;
+
+    // Distribute generic events into gaps between historical events
+    const result = [];
+    const gaps = withYear.length + 1; // slots: before first, between each, after last
+    let ni = 0;
+    for (let g = 0; g < gaps; g++) {
+      // Spread generic events roughly evenly across gaps
+      const remaining = noYear.length - ni;
+      const remainingGaps = gaps - g;
+      const count = Math.round(remaining / remainingGaps);
+      for (let j = 0; j < count && ni < noYear.length; j++) {
+        result.push(noYear[ni++]);
+      }
+      if (g < withYear.length) {
+        result.push(withYear[g]);
+      }
+    }
+    return result;
   }
 
   _checkConditions(conditions) {
