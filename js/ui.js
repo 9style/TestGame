@@ -45,7 +45,6 @@ export class UI {
       ending: document.getElementById('screen-ending'),
       gallery: document.getElementById('screen-gallery'),
       transition: document.getElementById('screen-transition'),
-      faction: document.getElementById('screen-faction'),
     };
     this.callbacks = {};
   }
@@ -292,58 +291,6 @@ export class UI {
     return new Promise(resolve => {
       setTimeout(resolve, durationMs);
     });
-  }
-
-  // --- Faction Choice Screen ---
-
-  renderFactionChoice() {
-    const factions = [
-      {
-        id: 'shu',
-        icon: '🛡️',
-        name: '蜀',
-        leader: '刘备',
-        motto: '桃园结义，共扶汉室',
-        preview: '共破黄巾 → 流离新野 → 入川建业 → 北伐中原',
-      },
-      {
-        id: 'wei',
-        icon: '⚔️',
-        name: '魏',
-        leader: '曹操',
-        motto: '共举义兵，平定乱世',
-        preview: '青州平乱 → 官渡大战 → 征伐四方 → 曹魏立国',
-      },
-      {
-        id: 'wu',
-        icon: '⛵',
-        name: '吴',
-        leader: '孙坚',
-        motto: '据江东之地，成不世之功',
-        preview: '平定山越 → 赤壁抗曹 → 夺取荆州 → 东吴霸业',
-      },
-    ];
-
-    const container = document.getElementById('faction-cards');
-    container.innerHTML = '';
-
-    for (const f of factions) {
-      const card = document.createElement('div');
-      card.className = 'faction-card';
-      card.innerHTML = `
-        <div class="faction-card-header">
-          <span class="faction-card-icon">${f.icon}</span>
-          <span class="faction-card-name">${f.name}</span>
-          <span class="faction-card-leader">— ${f.leader}</span>
-        </div>
-        <p class="faction-card-motto">"${f.motto}"</p>
-        <p class="faction-card-preview">📜 ${f.preview}</p>
-      `;
-      card.onclick = () => this.callbacks.onFactionSelected?.(f.id);
-      container.appendChild(card);
-    }
-
-    this.showScreen('faction');
   }
 
   // --- Ending Screen ---
