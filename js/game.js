@@ -9,6 +9,7 @@ export class Game {
     this.phases = data.phases; // array of phase objects, each with .events, .pickCount, .transition, .phase
     this.characterEvents = data.characterEvents || {}; // keyed by characterId then phase
     this.crisisEvents = data.crisisEvents || []; // array of crisis event objects
+    this.crossroadsEvent = data.crossroadsEvent || null;
     this.state = null;
     this.playerName = null;
   }
@@ -376,6 +377,132 @@ export class Game {
 
   needsRetroactiveFactionChoice() {
     return this.state && this.state.phaseIndex > 0 && !this.state.faction;
+  }
+
+  getCrossroadsEvent() {
+    if (!this.crossroadsEvent) return null;
+    const template = this.crossroadsEvent;
+    const flags = this.state.flags;
+    const hidden = this.state.hidden;
+
+    // Build dynamic description
+    let description = template.description_base + '\n\n';
+
+    // Collect matching hooks based on player's youth experiences
+    const hooks = [];
+    if (flags.includes('befriend_guanyu') && template.description_hooks.befriend_guanyu) {
+      hooks.push(template.description_hooks.befriend_guanyu);
+    }
+    if ((hidden['魏'] || 50) >= 55 && template.description_hooks.high_wei) {
+      hooks.push(template.description_hooks.high_wei);
+    }
+    if ((hidden['吴'] || 50) >= 55 && template.description_hooks.high_wu) {
+      hooks.push(template.description_hooks.high_wu);
+    }
+
+    if (hooks.length > 0) {
+      description += hooks.join('\n\n');
+    } else {
+      description += template.description_hooks.default || '';
+    }
+
+    description += template.description_tail || '';
+
+    // Build choices with lock status
+    const choices = template.choices.map(c => {
+      const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+      const affinityValue = hidden[factionMap[c.faction]] || 50;
+      const locked = affinityValue < (c.lock_threshold || 0);
+      return {
+        text: c.text,
+        result: c.result,
+        faction: c.faction,
+        locked,
+        lock_reason: locked ? c.lock_reason : null,
+      };
+    });
+
+    // Safety valve: ensure at least 2 unlocked choices
+    const unlockedCount = choices.filter(c => !c.locked).length;
+    if (unlockedCount < 2) {
+      const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+      const lockedChoices = choices.filter(c => c.locked);
+      lockedChoices.sort((a, b) =>
+        (hidden[factionMap[b.faction]] || 50) - (hidden[factionMap[a.faction]] || 50)
+      );
+      if (lockedChoices.length > 0) {
+        const toUnlock = lockedChoices[0];
+        toUnlock.locked = false;
+        toUnlock.lock_reason = null;
+        toUnlock.text += '（虽缘分浅薄，但尚可一试）';
+      }
+    }
+
+    return {
+      id: template.id,
+      year: template.year,
+      title: template.title,
+      description,
+      choices,
+      isCrossroads: true,
+    };
+  }
+
+  applyCrossroadsChoice(choiceIndex) {
+    const event = this.getCrossroadsEvent();
+    if (!event) throw new Error('No crossroads event available');
+
+    const unlocked = event.choices.filter(c => !c.locked);
+    const choice = unlocked[choiceIndex];
+    if (!choice) throw new Error(`Invalid crossroads choice index: ${choiceIndex}`);
+
+    const factionId = choice.faction;
+
+    // Apply affinity bonus if this is the player's highest-affinity faction
+    const bonus = this.getAffinityBonus(factionId);
+
+    // Select faction (existing method: sets state.faction, adjusts hidden attrs, adds flag)
+    this.selectFaction(factionId);
+
+    // Apply affinity bonus after selectFaction
+    if (bonus.hasBonus) {
+      const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+      this.state.hidden[factionMap[factionId]] = this._clamp(
+        this.state.hidden[factionMap[factionId]] + 3
+      );
+    }
+
+    this.state.history.push(`crossroads:${factionId}`);
+    this.save();
+
+    let resultText = choice.result;
+    if (bonus.hasBonus) {
+      resultText += '\n\n' + bonus.bonusText;
+    }
+
+    return {
+      result: resultText,
+      effects: {},
+      factionSelected: factionId,
+    };
+  }
+
+  getAffinityBonus(factionId) {
+    const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+    const chosen = factionMap[factionId];
+    const chosenValue = this.state.hidden[chosen] || 50;
+
+    // Check if chosen faction has the highest (or tied highest) affinity
+    const allValues = Object.entries(factionMap).map(([, name]) => this.state.hidden[name] || 50);
+    const maxValue = Math.max(...allValues);
+
+    if (chosenValue >= maxValue && chosenValue > 50) {
+      return {
+        hasBonus: true,
+        bonusText: '你与此间众人一见如故，如鱼得水。',
+      };
+    }
+    return { hasBonus: false, bonusText: '' };
   }
 
   getTransitionText() {
