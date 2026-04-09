@@ -34,3 +34,17 @@ export async function loadAllData() {
     crisisEvents: dataMap['events-crisis'],
   };
 }
+
+export async function loadFactionData(faction) {
+  const phaseNames = ['rise', 'war', 'final'];
+  const results = await Promise.all(
+    phaseNames.map(phase => {
+      const path = `data/events-${phase}-${faction}.json`;
+      return fetch(path).then(r => {
+        if (!r.ok) throw new Error(`Failed to load ${path}: ${r.status}`);
+        return r.json();
+      });
+    })
+  );
+  return results; // [risePhase, warPhase, finalPhase]
+}
