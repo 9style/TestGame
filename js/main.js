@@ -88,7 +88,17 @@ async function init() {
   function showCrossroadsEvent() {
     const event = game.getCrossroadsEvent();
     if (!event) {
-      // Fallback: if crossroads data missing, advance normally
+      // Fallback: auto-select highest-affinity faction to avoid infinite loop
+      console.warn('Crossroads event data missing, auto-selecting faction');
+      const hidden = game.state.hidden;
+      const factions = [
+        { id: 'shu', value: hidden['蜀'] || 50 },
+        { id: 'wei', value: hidden['魏'] || 50 },
+        { id: 'wu', value: hidden['吴'] || 50 },
+      ];
+      factions.sort((a, b) => b.value - a.value);
+      game.selectFaction(factions[0].id);
+      game.save();
       handlePhaseEnd();
       return;
     }
@@ -125,10 +135,13 @@ async function init() {
     showCurrentEvent();
   });
 
+  let crossroadsProcessing = false;
+
   ui.on('onChoice', async (choiceIndex) => {
     // Handle crossroads event choice (faction selection)
     if (game.needsFactionChoice()) {
-      if (game.state.faction) return; // Guard against double-click
+      if (crossroadsProcessing) return; // Guard against double-click during async load
+      crossroadsProcessing = true;
 
       try {
         const result = game.applyCrossroadsChoice(choiceIndex);
@@ -142,6 +155,7 @@ async function init() {
         ui.renderResult(result.result, result.effects);
       } catch (err) {
         console.error('Failed to load faction data:', err);
+        crossroadsProcessing = false; // Reset on error so user can retry
       }
       return;
     }
