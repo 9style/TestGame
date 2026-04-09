@@ -67,9 +67,13 @@ async function init() {
       return;
     }
 
-    // After youth phase (index 0), show faction choice before advancing
+    // After youth phase (index 0), show transition then crossroads event
     if (game.needsFactionChoice()) {
-      ui.renderFactionChoice();
+      const transitionText = game.getTransitionText();
+      if (transitionText) {
+        await ui.renderTransition(transitionText, 'youth');
+      }
+      showCrossroadsEvent();
       return;
     }
 
@@ -79,6 +83,22 @@ async function init() {
       await ui.renderTransition(transitionText, phaseName);
     }
     showCurrentEvent();
+  }
+
+  function showCrossroadsEvent() {
+    const event = game.getCrossroadsEvent();
+    if (!event) {
+      // Fallback: if crossroads data missing, advance normally
+      handlePhaseEnd();
+      return;
+    }
+    ui.renderEvent(
+      event,
+      '📍 少年期 · 抉择',
+      game.state.characterName,
+      game.state.attrs,
+      game.state.hidden
+    );
   }
 
   function showGallery(fromScreen) {
@@ -105,50 +125,54 @@ async function init() {
     showCurrentEvent();
   });
 
-  ui.on('onFactionSelected', async (factionId) => {
-    // Guard against double-click during async load
-    if (game.state.faction) return;
+  ui.on('onChoice', async (choiceIndex) => {
+    // Handle crossroads event choice (faction selection)
+    if (game.needsFactionChoice()) {
+      if (game.state.faction) return; // Guard against double-click
 
-    try {
-      // Load faction data first — only commit state after success
-      const factionPhases = await loadFactionData(factionId);
-      game.selectFaction(factionId);
-      game.loadFactionPhases(factionPhases);
+      try {
+        const result = game.applyCrossroadsChoice(choiceIndex);
+        const factionId = result.factionSelected;
 
-      // Show faction transition text, then advance to rise phase
-      const transitionText = game.getFactionTransition(factionId);
-      game.advancePhase();
-      const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
-      await ui.renderTransition(transitionText, phaseName);
+        // Load faction data
+        const factionPhases = await loadFactionData(factionId);
+        game.loadFactionPhases(factionPhases);
 
-      showCurrentEvent();
-    } catch (err) {
-      console.error('Failed to load faction data:', err);
+        // Show result text
+        ui.renderResult(result.result, result.effects);
+      } catch (err) {
+        console.error('Failed to load faction data:', err);
+      }
+      return;
     }
-  });
 
-  ui.on('onChoice', (choiceIndex) => {
+    // Normal event choice
     const result = game.applyChoice(choiceIndex);
     ui.renderResult(result.result, result.effects, result.isDeath, result.crisisResolved);
-
-    // If player died, we'll handle it on continue
   });
 
-  ui.on('onContinue', () => {
+  ui.on('onContinue', async () => {
     // Check if player just died
     if (game.isDead()) {
       showDeathEnding(game.state.deathEnding);
       return;
     }
 
-    // If crisis was just resolved, advance to next phase
-    if (!game.state.inCrisis && game.isPhaseComplete()) {
+    // After crossroads choice: faction is set but phase not yet advanced
+    if (game.state.faction && game.state.phaseIndex === 0 && game.isPhaseComplete()) {
+      const transitionText = game.getFactionTransition(game.state.faction);
+      game.advancePhase();
+      const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
+      await ui.renderTransition(transitionText, phaseName);
+      showCurrentEvent();
+      return;
+    }
+
+    // Normal flow
+    if (game.isPhaseComplete()) {
       handlePhaseEnd();
     } else if (game.state.inCrisis) {
-      // Still in crisis (shouldn't happen normally)
       showCurrentEvent();
-    } else if (game.isPhaseComplete()) {
-      handlePhaseEnd();
     } else {
       showCurrentEvent();
     }
@@ -174,7 +198,7 @@ async function init() {
   // Check for saved game
   if (game.getPlayerName() && game.load()) {
     if (game.needsRetroactiveFactionChoice()) {
-      ui.renderFactionChoice();
+      showCrossroadsEvent();
     } else if (game.state.faction && game.state.phaseIndex > 0) {
       const factionPhases = await loadFactionData(game.state.faction);
       game.loadFactionPhases(factionPhases);
