@@ -185,18 +185,34 @@ export class UI {
     const container = document.getElementById('choices-container');
     container.innerHTML = '';
 
-    event.choices.forEach((choice, index) => {
+    let unlockedIndex = 0;
+
+    event.choices.forEach((choice) => {
       const btn = document.createElement('button');
 
-      // Check if this is a danger choice (crisis_trigger or crisis_check)
+      // Handle locked choices (crossroads event)
+      if (choice.locked) {
+        btn.className = 'choice-btn choice-locked';
+        btn.innerHTML = `
+          <div class="choice-text">🔒 ${choice.text}</div>
+          <div class="choice-lock-reason">${choice.lock_reason}</div>
+        `;
+        btn.disabled = true;
+        container.appendChild(btn);
+        return;
+      }
+
+      // Normal choice rendering
       const isDanger = choice.crisis_trigger || choice.crisis_check;
       btn.className = `choice-btn${isDanger ? ' choice-danger' : ''}`;
-
       btn.innerHTML = `
         <div class="choice-text">${choice.text}${isDanger ? ' <span class="choice-danger-tag">⚠️ 危险</span>' : ''}</div>
       `;
+
+      const idx = unlockedIndex;
+      unlockedIndex++;
       btn.onclick = () => {
-        this.callbacks.onChoice?.(index);
+        this.callbacks.onChoice?.(idx);
       };
       container.appendChild(btn);
     });
