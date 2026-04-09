@@ -255,6 +255,24 @@ html, body {
 .choice-text { font-weight: bold; margin-bottom: 4px; }
 .choice-danger-tag { color: var(--red); font-size: 12px; font-weight: bold; }
 
+/* === Locked Choices === */
+.choice-btn.choice-locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--text-dim);
+  background: var(--bg-dark);
+}
+.choice-btn.choice-locked:active {
+  border-color: var(--text-dim);
+}
+.choice-lock-reason {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+  line-height: 1.6;
+}
+
 /* === Result Screen === */
 .result-content {
   flex: 1;
