@@ -88,6 +88,7 @@ export class Game {
       deathEnding: null,       // set when player dies mid-game
       inCrisis: false,         // true when a crisis event is active
       crisisEvent: null,       // the crisis event object if active
+      faction: null,            // 'shu' | 'wei' | 'wu' | null
     };
     this.state.phaseEvents = this._pickPhaseEvents(0);
     this.save();
@@ -330,6 +331,48 @@ export class Game {
     return this.phases[nextIndex].transition;
   }
 
+  selectFaction(factionId) {
+    if (!this.state) return;
+    this.state.faction = factionId;
+
+    const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+    const allFactions = ['蜀', '魏', '吴'];
+    const chosen = factionMap[factionId];
+
+    this.state.hidden[chosen] = Math.min(100, (this.state.hidden[chosen] || 50) + 20);
+    for (const f of allFactions) {
+      if (f !== chosen) {
+        this.state.hidden[f] = Math.max(0, (this.state.hidden[f] || 50) - 5);
+      }
+    }
+
+    this.state.flags.push(`faction_${factionId}`);
+    this.save();
+  }
+
+  loadFactionPhases(factionPhases) {
+    this.phases[1] = factionPhases[0];
+    this.phases[2] = factionPhases[1];
+    this.phases[3] = factionPhases[2];
+  }
+
+  getFactionTransition(factionId) {
+    const texts = {
+      shu: '你跟随刘备，辗转流离，虽屡遭挫败，却始终不忘匡扶汉室之志。乱世之中，义字当先……',
+      wei: '你投身曹操麾下，南征北战，以雷霆手段荡平群雄。这是一条铁血铸就的道路……',
+      wu: '你追随孙氏，扎根江东。长江天堑之后，一片新天地正等待你去开拓……',
+    };
+    return texts[factionId] || '';
+  }
+
+  needsFactionChoice() {
+    return this.state && this.state.phaseIndex === 0 && !this.state.faction;
+  }
+
+  needsRetroactiveFactionChoice() {
+    return this.state && this.state.phaseIndex > 0 && !this.state.faction;
+  }
+
   getTransitionText() {
     const nextIndex = this.state.phaseIndex + 1;
     if (nextIndex >= this.phases.length) return null;
@@ -386,6 +429,7 @@ export class Game {
       if (this.state.deathEnding === undefined) this.state.deathEnding = null;
       if (this.state.inCrisis === undefined) this.state.inCrisis = false;
       if (this.state.crisisEvent === undefined) this.state.crisisEvent = null;
+      if (this.state.faction === undefined) this.state.faction = null;
       // Backward compat: add faction attrs if missing
       if (this.state.hidden) {
         this.state.hidden['魏'] ??= 50;
@@ -470,7 +514,10 @@ export class Game {
 
     // Get character-specific event for this phase
     const charId = this.state.characterId;
-    const charEvent = this.characterEvents[charId]?.[phaseName];
+    const charEventData = this.characterEvents[charId]?.[phaseName];
+    const charEvent = (phaseIndex === 0 || !this.state.faction)
+      ? charEventData
+      : charEventData?.[this.state.faction];
 
     // Filter general events by conditions (including flag conditions)
     const eligible = phase.events.filter(e => this._checkConditions(e.conditions));
