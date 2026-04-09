@@ -1,6 +1,6 @@
 // main.js — Entry point: wires data-loader, game engine, and UI together
 
-import { loadAllData } from './data-loader.js';
+import { loadAllData, loadFactionData } from './data-loader.js';
 import { Game } from './game.js';
 import { UI } from './ui.js';
 
@@ -63,7 +63,13 @@ async function init() {
     const crisisEvent = game.checkCrisis();
     if (crisisEvent) {
       game.enterCrisis(crisisEvent);
-      showCurrentEvent(); // Will render the crisis event
+      showCurrentEvent();
+      return;
+    }
+
+    // After youth phase (index 0), show faction choice before advancing
+    if (game.needsFactionChoice()) {
+      ui.renderFactionChoice();
       return;
     }
 
@@ -96,6 +102,22 @@ async function init() {
 
   ui.on('onSelectCharacter', (characterId) => {
     game.selectCharacter(characterId);
+    showCurrentEvent();
+  });
+
+  ui.on('onFactionSelected', async (factionId) => {
+    game.selectFaction(factionId);
+
+    // Load faction-specific event data
+    const factionPhases = await loadFactionData(factionId);
+    game.loadFactionPhases(factionPhases);
+
+    // Show faction transition text, then advance to rise phase
+    const transitionText = game.getFactionTransition(factionId);
+    game.advancePhase();
+    const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
+    await ui.renderTransition(transitionText, phaseName);
+
     showCurrentEvent();
   });
 
@@ -145,8 +167,15 @@ async function init() {
 
   // Check for saved game
   if (game.getPlayerName() && game.load()) {
-    // Resume saved game
-    showCurrentEvent();
+    if (game.needsRetroactiveFactionChoice()) {
+      ui.renderFactionChoice();
+    } else if (game.state.faction && game.state.phaseIndex > 0) {
+      const factionPhases = await loadFactionData(game.state.faction);
+      game.loadFactionPhases(factionPhases);
+      showCurrentEvent();
+    } else {
+      showCurrentEvent();
+    }
   } else {
     showTitle();
   }
