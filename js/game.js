@@ -333,9 +333,11 @@ export class Game {
 
   selectFaction(factionId) {
     if (!this.state) return;
+    const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
+    if (!factionMap[factionId]) throw new Error(`Unknown faction: ${factionId}`);
+
     this.state.faction = factionId;
 
-    const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
     const allFactions = ['蜀', '魏', '吴'];
     const chosen = factionMap[factionId];
 
@@ -346,7 +348,10 @@ export class Game {
       }
     }
 
-    this.state.flags.push(`faction_${factionId}`);
+    const flag = `faction_${factionId}`;
+    if (!this.state.flags.includes(flag)) {
+      this.state.flags.push(flag);
+    }
     this.save();
   }
 

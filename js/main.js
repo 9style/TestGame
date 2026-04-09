@@ -106,19 +106,25 @@ async function init() {
   });
 
   ui.on('onFactionSelected', async (factionId) => {
-    game.selectFaction(factionId);
+    // Guard against double-click during async load
+    if (game.state.faction) return;
 
-    // Load faction-specific event data
-    const factionPhases = await loadFactionData(factionId);
-    game.loadFactionPhases(factionPhases);
+    try {
+      // Load faction data first — only commit state after success
+      const factionPhases = await loadFactionData(factionId);
+      game.selectFaction(factionId);
+      game.loadFactionPhases(factionPhases);
 
-    // Show faction transition text, then advance to rise phase
-    const transitionText = game.getFactionTransition(factionId);
-    game.advancePhase();
-    const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
-    await ui.renderTransition(transitionText, phaseName);
+      // Show faction transition text, then advance to rise phase
+      const transitionText = game.getFactionTransition(factionId);
+      game.advancePhase();
+      const phaseName = PHASE_IMAGE_NAMES[game.state.phaseIndex];
+      await ui.renderTransition(transitionText, phaseName);
 
-    showCurrentEvent();
+      showCurrentEvent();
+    } catch (err) {
+      console.error('Failed to load faction data:', err);
+    }
   });
 
   ui.on('onChoice', (choiceIndex) => {
