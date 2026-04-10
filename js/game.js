@@ -138,7 +138,8 @@ export class Game {
 
     // Check for instant death trigger
     if (choice.crisis_trigger && choice.crisis_check) {
-      const passed = this._checkCrisisConditions(choice.crisis_check);
+      const successRate = this._checkCrisisConditions(choice.crisis_check);
+      const passed = Math.random() < successRate;
       if (!passed) {
         // Instant death
         this.state.deathEnding = choice.death_ending;
@@ -204,7 +205,8 @@ export class Game {
     }
 
     // Crisis check choice
-    const passed = this._checkCrisisConditions(choice.crisis_check);
+    const successRate = this._checkCrisisConditions(choice.crisis_check);
+      const passed = Math.random() < successRate;
     if (passed) {
       const appliedEffects = this._applyEffects(choice.success_effects || {});
       this._applyHidden(choice.success_hidden_effects);
@@ -292,13 +294,35 @@ export class Game {
   }
 
   _checkCrisisConditions(check) {
-    for (const [attr, range] of Object.entries(check)) {
+    let totalRate = 0;
+    let count = 0;
+
+    for (const [attr, config] of Object.entries(check)) {
       const value = this.state.attrs[attr] ?? this.state.hidden[attr];
       if (value === undefined) continue;
-      if (range.min !== undefined && value < range.min) return false;
-      if (range.max !== undefined && value > range.max) return false;
+
+      const target = config.target ?? config.min;
+      const mode = config.mode ?? 'threshold';
+
+      if (mode === 'probability') {
+        // Probability mode: linear scaling with 10% minimum
+        if (value >= target) {
+          totalRate += 1; // 100% success
+        } else {
+          const ratio = value / target;
+          const rate = Math.max(0.1, ratio); // 10% minimum
+          totalRate += rate;
+        }
+      } else {
+        // Threshold mode (backward compatible)
+        if (config.min !== undefined && value < config.min) return 0;
+        if (config.max !== undefined && value > config.max) return 0;
+        totalRate += 1;
+      }
+      count++;
     }
-    return true;
+
+    return count > 0 ? totalRate / count : 1;
   }
 
   _getVisibleCrisisChoices(event) {
