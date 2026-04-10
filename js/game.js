@@ -412,13 +412,33 @@ export class Game {
     const choices = template.choices.map(c => {
       const factionMap = { shu: '蜀', wei: '魏', wu: '吴' };
       const affinityValue = hidden[factionMap[c.faction]] || 50;
-      const locked = affinityValue < (c.lock_threshold || 0);
+
+      // Check flag-based hard locks first
+      let locked = false;
+      let lockReason = null;
+
+      if (c.lock_flags && Array.isArray(c.lock_flags)) {
+        for (const flag of c.lock_flags) {
+          if (flags.includes(flag)) {
+            locked = true;
+            lockReason = c[`lock_reason_${flag}`] || c.lock_reason;
+            break;
+          }
+        }
+      }
+
+      // If not locked by flag, check affinity-based soft lock
+      if (!locked && affinityValue < (c.lock_threshold || 0)) {
+        locked = true;
+        lockReason = c.lock_reason;
+      }
+
       return {
         text: c.text,
         result: c.result,
         faction: c.faction,
         locked,
-        lock_reason: locked ? c.lock_reason : null,
+        lock_reason: lockReason,
       };
     });
 
