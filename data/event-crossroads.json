@@ -16,21 +16,28 @@
       "text": "追随刘备南下——大丈夫当以仁义立世",
       "result": "你翻身上马，向刘备的旗帜奔去。关羽远远地看见了你，微微一笑。张飞则大声吆喝：'好！又多一位兄弟！'从此，你的命运与这支仁义之师紧紧相连。",
       "lock_threshold": 40,
-      "lock_reason": "刘备虽仁德待人，但你与他素无交集，他的队伍已经出发，没有人认识你。"
+      "lock_reason": "刘备虽仁德待人，但你与他素无交集，他的队伍已经出发，没有人认识你。",
+      "lock_flags": ["assisted_caocao_assassination"],
+      "lock_reason_assisted_caocao_assassination": "你曾助曹操刺董，与曹家有生死之恩，刘备乃汉室宗亲，岂能容你？"
     },
     {
       "faction": "wei",
       "text": "投奔曹操东归——唯有铁腕方能平乱",
       "result": "你拨马东行，曹操的军营就在前方。一名校尉将你引入中帐，曹操抬头看了你一眼，放下手中兵书：'乱世用人，不拘一格。你来了，正好。'",
       "lock_threshold": 40,
-      "lock_reason": "你曾向董卓告发曹操的行踪，此仇不共戴天。曹营的大门，已对你永远关闭。"
+      "lock_reason": "你曾向董卓告发曹操的行踪，此仇不共戴天。曹营的大门，已对你永远关闭。",
+      "lock_flags": ["befriend_guanyu", "served_sunjian"],
+      "lock_reason_befriend_guanyu": "你已与关羽结为兄弟，誓同生死，岂能背弃桃园之誓，投效曹贼？",
+      "lock_reason_served_sunjian": "孙坚待你不薄，且曾邀你共图大业，此时投奔曹操，岂非背信弃义？"
     },
     {
       "faction": "wu",
       "text": "随孙坚渡江南下——江东天险，大有可为",
       "result": "你加入了南下的队伍。孙坚骑在马上，望着滔滔江水说：'过了这条江，就是我们的天下。'长江天堑之后，一片新天地等待着你。",
       "lock_threshold": 40,
-      "lock_reason": "你与江东毫无渊源，孙坚的部将不会接纳一个陌生人。"
+      "lock_reason": "你与江东毫无渊源，孙坚的部将不会接纳一个陌生人。",
+      "lock_flags": ["befriend_guanyu"],
+      "lock_reason_befriend_guanyu": "你已与关羽结为兄弟，誓同生死，岂能背弃桃园之誓，投奔孙氏？"
     }
   ]
 }
