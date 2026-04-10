@@ -135,15 +135,16 @@ async function init() {
     showCurrentEvent();
   });
 
-  let crossroadsProcessing = false;
+  let choiceProcessing = false;
 
   ui.on('onChoice', async (choiceIndex) => {
-    // Handle crossroads event choice (faction selection)
-    if (game.needsFactionChoice()) {
-      if (crossroadsProcessing) return; // Guard against double-click during async load
-      crossroadsProcessing = true;
+    // Guard against double-click / rapid-click on any choice
+    if (choiceProcessing) return;
+    choiceProcessing = true;
 
-      try {
+    try {
+      // Handle crossroads event choice (faction selection)
+      if (game.needsFactionChoice()) {
         const result = game.applyCrossroadsChoice(choiceIndex);
         const factionId = result.factionSelected;
 
@@ -153,16 +154,17 @@ async function init() {
 
         // Show result text
         ui.renderResult(result.result, result.effects);
-      } catch (err) {
-        console.error('Failed to load faction data:', err);
-        crossroadsProcessing = false; // Reset on error so user can retry
+        return;
       }
-      return;
-    }
 
-    // Normal event choice
-    const result = game.applyChoice(choiceIndex);
-    ui.renderResult(result.result, result.effects, result.isDeath, result.crisisResolved);
+      // Normal event choice
+      const result = game.applyChoice(choiceIndex);
+      ui.renderResult(result.result, result.effects, result.isDeath, result.crisisResolved);
+    } catch (err) {
+      console.error('Choice processing failed:', err);
+    } finally {
+      choiceProcessing = false;
+    }
   });
 
   ui.on('onContinue', async () => {

@@ -252,8 +252,9 @@ html, body {
   transition: border-color 0.2s;
 }
 .choice-btn:active { border-color: var(--gold); }
-.choice-text { font-weight: bold; margin-bottom: 4px; }
-.choice-danger-tag { color: var(--red); font-size: 12px; font-weight: bold; }
+.choice-text { font-weight: bold; margin-bottom: 4px; pointer-events: none; }
+.choice-danger-tag { color: var(--red); font-size: 12px; font-weight: bold; pointer-events: none; }
+.choice-lock-reason { pointer-events: none; }
 
 /* === Locked Choices === */
 .choice-btn.choice-locked {
